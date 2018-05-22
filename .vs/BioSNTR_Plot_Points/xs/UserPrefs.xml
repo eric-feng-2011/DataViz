@@ -1,5 +1,5 @@
 ﻿<Properties StartupConfiguration="{552D661E-CEBE-DD2A-9559-5089C7B4F4BA}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/OrientLabels.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/DataPlotter.cs">
     <Files>
       <File FileName="Assets/Scripts/CSVReader.cs" Line="13" Column="32" />
       <File FileName="Assets/Scripts/DataPlotter.cs" Line="184" Column="23" />
