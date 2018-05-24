@@ -6,7 +6,11 @@ using Accord;
 using Accord.Math;
 using Accord.Statistics.Analysis;
 
+//TODO: Plot based on Color. 
+//TODO: Accept more than 3 columns of data, but project only onto three chosen dimensions
+
 //@source Big Data Social Science Fellows @ Penn State - Plot Points 
+//PCA Method: Take in 3 columns of data and plot PCA and points in 3D with standard basis
 public class DataPlotter : MonoBehaviour {
 
 	//Scale the graph
@@ -30,6 +34,8 @@ public class DataPlotter : MonoBehaviour {
 	public int columnY = 2;
 	public int columnZ = 3;
 
+	public int speciesColumn = 5;
+
 	// Full column names
 	private string xName;
 	private string yName;
@@ -50,8 +56,13 @@ public class DataPlotter : MonoBehaviour {
 	// List for holding data from CSV reader
 	private List<Dictionary<string, object>> pointList;
 
+	//Dictionary to hold mappings from species to color
+	private Dictionary<String, Color> colorMap;
+
 	// Use this for initialization
 	void Start () {
+
+		colorMap = new Dictionary<String, Color>();
 
 		GameObject graph = Instantiate (graphHolder, new Vector3 (0, 0, 0), Quaternion.identity);
 		graph.transform.localScale *= plotScale / 10f;
@@ -65,6 +76,7 @@ public class DataPlotter : MonoBehaviour {
 
 		// Declare list of strings, fill with keys (column names)
 		List<string> columnList = new List<string>(pointList[1].Keys);
+		createColorMap (columnList);
 
 		// Print number of keys (using .count)
 		//Debug.Log("There are " + columnList.Count + " columns in CSV");
@@ -75,9 +87,9 @@ public class DataPlotter : MonoBehaviour {
 		plotPoints (columnList);
 		AssignLabels ();
 		Vector3 [] threePCA = calcPCA ();
-		for (int i = 0; i < threePCA.Length; i++) {
-			Debug.Log (threePCA [i]);
-		}
+//		for (int i = 0; i < threePCA.Length; i++) {
+//			Debug.Log (threePCA [i]);
+//		}
 		plotPCA (threePCA);
 	}
 
@@ -130,9 +142,12 @@ public class DataPlotter : MonoBehaviour {
 			// Assigns name to the prefab
 			dataPoint.transform.name = dataPointName;
 
+			string species = Convert.ToString(pointList [i] [columnList[speciesColumn]]);
+			//Debug.Log ("Species of point " + i + ": " + species);
+
 			// Gets material color and sets it to a new RGBA color we define
 			dataPoint.GetComponent<Renderer>().material.color = 
-				new Color(x,y,z, 1.0f);
+				colorMap[species];
 		}
 	}
 
@@ -298,5 +313,35 @@ public class DataPlotter : MonoBehaviour {
 			sum += array [i];
 		}
 		return (float)sum / array.Length;
+	}
+
+
+	//Create the colorMap that contains unique colors for each species
+	private void createColorMap(List<string> columnList) {
+
+		int numUniq = 0;
+		HashSet<string> trackSpecies = new HashSet<string> ();
+
+		for (int i = 0; i < pointList.Count; i++) {
+			string species = Convert.ToString (pointList [i] [columnList [speciesColumn]]);
+			//Debug.Log ("Species of point " + i + ": " + species);
+
+			if (!trackSpecies.Contains (species)) {
+				trackSpecies.Add (species);
+				numUniq += 1;
+			}
+		}
+
+		int counter = 0;
+		float step = 1f/numUniq;
+
+		foreach (string species in trackSpecies) {
+			counter += 1;
+			float start = step * (counter - 1);
+			float end = step * (counter);
+			colorMap.Add(species, new Color (UnityEngine.Random.Range (start, end), 
+				UnityEngine.Random.Range (start, end),
+				UnityEngine.Random.Range (start, end)));
+		}			
 	}
 }
