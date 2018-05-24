@@ -241,6 +241,15 @@
  <Reference Include="UnityEditor.OSXStandalone.Extensions">
  <HintPath>/Applications/Unity/Unity.app/Contents/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll</HintPath>
  </Reference>
+ <Reference Include="Accord">
+ <HintPath>/Users/ericfeng/Desktop/Berkeley/VR@B/BioSNTR_Plot_Points/Assets/DLLs/Accord.dll</HintPath>
+ </Reference>
+ <Reference Include="Accord.Math">
+ <HintPath>/Users/ericfeng/Desktop/Berkeley/VR@B/BioSNTR_Plot_Points/Assets/DLLs/Accord.Math.dll</HintPath>
+ </Reference>
+ <Reference Include="Accord.Statistics">
+ <HintPath>/Users/ericfeng/Desktop/Berkeley/VR@B/BioSNTR_Plot_Points/Assets/DLLs/Accord.Statistics.dll</HintPath>
+ </Reference>
  <Reference Include="UnityEngine.Advertisements">
  <HintPath>/Users/ericfeng/Library/Unity/cache/packages/packages.unity.com/com.unity.ads@2.0.3/UnityEngine.Advertisements.dll</HintPath>
  </Reference>
@@ -261,15 +270,6 @@
  </Reference>
  <Reference Include="UnityEngine.StandardEvents">
  <HintPath>/Users/ericfeng/Library/Unity/cache/packages/packages.unity.com/com.unity.standardevents@1.0.10/UnityEngine.StandardEvents.dll</HintPath>
- </Reference>
- <Reference Include="Accord.Statistics">
- <HintPath>/Users/ericfeng/Desktop/Berkeley/VR@B/BioSNTR_Plot_Points/Assets/DLLs/Accord.Statistics.dll</HintPath>
- </Reference>
- <Reference Include="Accord">
- <HintPath>/Users/ericfeng/Desktop/Berkeley/VR@B/BioSNTR_Plot_Points/Assets/DLLs/Accord.dll</HintPath>
- </Reference>
- <Reference Include="Accord.Math">
- <HintPath>/Users/ericfeng/Desktop/Berkeley/VR@B/BioSNTR_Plot_Points/Assets/DLLs/Accord.Math.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
