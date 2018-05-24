@@ -6,7 +6,11 @@ using Accord;
 using Accord.Math;
 using Accord.Statistics.Analysis;
 
-//@source Big Data Social Science Fellows @ Penn State
+//TODO: Plot based on Color. 
+//TODO: Accept more than 3 columns of data, but project only onto three chosen dimensions
+
+//@source Big Data Social Science Fellows @ Penn State - Plot Points 
+//PCA Method: Take in 3 columns of data and plot PCA and points in 3D with standard basis
 public class DataPlotter : MonoBehaviour {
 
 	//Scale the graph
@@ -21,10 +25,16 @@ public class DataPlotter : MonoBehaviour {
 	public GameObject textLabel;
 	public GameObject labelHolder;
 
+	public LineRenderer PCA1;
+	public LineRenderer PCA2;
+	public LineRenderer PCA3;
+
 	// Indices for columns to be assigned
 	public int columnX = 1;
 	public int columnY = 2;
 	public int columnZ = 3;
+
+	public int speciesColumn = 5;
 
 	// Full column names
 	private string xName;
@@ -46,8 +56,13 @@ public class DataPlotter : MonoBehaviour {
 	// List for holding data from CSV reader
 	private List<Dictionary<string, object>> pointList;
 
+	//Dictionary to hold mappings from species to color
+	private Dictionary<String, Color> colorMap;
+
 	// Use this for initialization
 	void Start () {
+
+		colorMap = new Dictionary<String, Color>();
 
 		GameObject graph = Instantiate (graphHolder, new Vector3 (0, 0, 0), Quaternion.identity);
 		graph.transform.localScale *= plotScale / 10f;
@@ -61,6 +76,7 @@ public class DataPlotter : MonoBehaviour {
 
 		// Declare list of strings, fill with keys (column names)
 		List<string> columnList = new List<string>(pointList[1].Keys);
+		createColorMap (columnList);
 
 		// Print number of keys (using .count)
 		//Debug.Log("There are " + columnList.Count + " columns in CSV");
@@ -70,12 +86,11 @@ public class DataPlotter : MonoBehaviour {
 		
 		plotPoints (columnList);
 		AssignLabels ();
-		double [][] threePCA = calcPCA ();
-		for (int i = 0; i < threePCA.Length; i++) {
-			for (int j = 0; j < threePCA[0].Length; j++) {
-				Debug.Log("Row: " + i + ", Col: " + j + ": " + threePCA[i][j]);
-			}
-		}
+		Vector3 [] threePCA = calcPCA ();
+//		for (int i = 0; i < threePCA.Length; i++) {
+//			Debug.Log (threePCA [i]);
+//		}
+		plotPCA (threePCA);
 	}
 
 	private void plotPoints(List<string> columnList) {
@@ -127,9 +142,12 @@ public class DataPlotter : MonoBehaviour {
 			// Assigns name to the prefab
 			dataPoint.transform.name = dataPointName;
 
+			string species = Convert.ToString(pointList [i] [columnList[speciesColumn]]);
+			//Debug.Log ("Species of point " + i + ": " + species);
+
 			// Gets material color and sets it to a new RGBA color we define
 			dataPoint.GetComponent<Renderer>().material.color = 
-				new Color(x,y,z, 1.0f);
+				colorMap[species];
 		}
 	}
 
@@ -211,7 +229,7 @@ public class DataPlotter : MonoBehaviour {
 		}
 	}
 
-	private double[][] calcPCA() {
+	private Vector3[] calcPCA() {
 
 		double[][] inputMatrix = new double[pointList.Count][];
 
@@ -226,26 +244,104 @@ public class DataPlotter : MonoBehaviour {
 
 			inputMatrix [i] = new double[3] { x, y, z };
 		}
-
-		PrincipalComponentAnalysis pca = new PrincipalComponentAnalysis(inputMatrix);
+		Vector3 meanCenter = new Vector3(getAverage(inputMatrix.GetColumn(0)), 
+			getAverage(inputMatrix.GetColumn(1)), getAverage(inputMatrix.GetColumn(2)));
+		
+		PrincipalComponentAnalysis pca = new PrincipalComponentAnalysis(inputMatrix, AnalysisMethod.Center);
 
 		//Computes N number of Principal components, each of dimension 3 (xyz-plane)
 		//N is the number of data points/entrys
 		pca.Compute();
-		double[][] components = pca.Transform(inputMatrix, 3);
+		double[,] components = pca.ComponentMatrix; //Obtains the principal components of data
+		double[] eigValues = pca.Eigenvalues;
+		//double[][] components = pca.Transform(inputMatrix, 3);
 
-		double[][] majorThree = new double[3][];
+		//First three vectors are principal components
+		//Fourth is meanCenter of data. Fifth is eigenvalues of principal components
+		Vector3[] majorThree = new Vector3[5];
 
 		for (int i = 0; i < 3; i++) {
-			double x = components[i][0];
+			float x = (float) components[0, i];
 
-			double y = components[i][1];
+			float y = (float) components[1, i];
 
-			double z = components[i][2];
+			float z = (float) components[2, i];
 
-			majorThree [i] = new double[3] { x, y, z };
+			majorThree[i] = new Vector3(x, y, z);
 		}
 
+		majorThree [3] = meanCenter;
+		majorThree [4] = new Vector3((float) eigValues[0], (float) eigValues[1], (float) eigValues[2]);
+
 		return majorThree;
+	}
+
+	private void plotPCA(Vector3[] pca) {
+
+		int numPositions = 2;
+
+		PCA1.positionCount = numPositions;
+		PCA2.positionCount = numPositions;
+		PCA3.positionCount = numPositions;
+
+		Vector3 pca1 = pca [0];
+		Vector3 pca2 = pca [1];
+		Vector3 pca3 = pca [2];
+
+		Vector3 center = pca [3];
+
+		for (int i = 0; i < numPositions; i++) {
+			PCA1.SetPosition (i, center + pca1 * i * plotScale);
+			PCA2.SetPosition (i, center + pca2 * i * plotScale);
+			PCA3.SetPosition (i, center + pca3 * i * plotScale);
+		}
+
+		setColor (PCA1, Color.red);
+		setColor (PCA2, Color.yellow);
+		setColor (PCA3, new Vector4 (1f, 0.5f, 0f, 1f));
+	}
+
+	private void setColor(LineRenderer line, Color color) {
+		line.material = new Material (Shader.Find ("Particles/Additive"));
+		line.startColor = color;
+		line.endColor = color;
+	}
+
+	private float getAverage(double[] array) {
+		double sum = 0;
+		for (int i = 0; i < array.Length; i++) {
+			sum += array [i];
+		}
+		return (float)sum / array.Length;
+	}
+
+
+	//Create the colorMap that contains unique colors for each species
+	private void createColorMap(List<string> columnList) {
+
+		int numUniq = 0;
+		HashSet<string> trackSpecies = new HashSet<string> ();
+
+		for (int i = 0; i < pointList.Count; i++) {
+			string species = Convert.ToString (pointList [i] [columnList [speciesColumn]]);
+			//Debug.Log ("Species of point " + i + ": " + species);
+
+			if (!trackSpecies.Contains (species)) {
+				trackSpecies.Add (species);
+				numUniq += 1;
+			}
+		}
+
+		int counter = 0;
+		float step = 1f/numUniq;
+
+		foreach (string species in trackSpecies) {
+			counter += 1;
+			float start = step * (counter - 1);
+			float end = step * (counter);
+			colorMap.Add(species, new Color (UnityEngine.Random.Range (start, end), 
+				UnityEngine.Random.Range (start, end),
+				UnityEngine.Random.Range (start, end)));
+		}			
 	}
 }
