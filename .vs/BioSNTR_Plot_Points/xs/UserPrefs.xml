@@ -1,10 +1,10 @@
 ﻿<Properties StartupConfiguration="{552D661E-CEBE-DD2A-9559-5089C7B4F4BA}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/DataPlotter.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Test.cs">
     <Files>
       <File FileName="Assets/Scripts/CSVReader.cs" Line="13" Column="32" />
       <File FileName="Assets/Scripts/DataPlotter.cs" Line="184" Column="23" />
       <File FileName="Assets/Scripts/OrientLabels.cs" Line="10" Column="17" />
-      <File FileName="nuget.config" Line="6" Column="17" />
+      <File FileName="Assets/Scripts/Test.cs" Line="5" Column="19" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.BioSNTR__Plot__Points PreferredExecutionTarget="Unity.Editor" />
