@@ -6,9 +6,6 @@ using Accord;
 using Accord.Math;
 using Accord.Statistics.Analysis;
 
-//TODO: Plot based on Color. 
-//TODO: Accept more than 3 columns of data, but project only onto three chosen dimensions
-
 //@source Big Data Social Science Fellows @ Penn State - Plot Points 
 //PCA Method: Take in 3 columns of data and plot PCA and points in 3D with standard basis
 public class DataPlotter : MonoBehaviour {
@@ -332,16 +329,21 @@ public class DataPlotter : MonoBehaviour {
 			}
 		}
 
-		int counter = 0;
 		float step = 1f/numUniq;
+		//Debug.Log (numUniq);
 
 		foreach (string species in trackSpecies) {
-			counter += 1;
-			float start = step * (counter - 1);
-			float end = step * (counter);
-			colorMap.Add(species, new Color (UnityEngine.Random.Range (start, end), 
-				UnityEngine.Random.Range (start, end),
-				UnityEngine.Random.Range (start, end)));
+
+			float randR = UnityEngine.Random.Range (0, numUniq);
+			//Debug.Log ("RandR: " + randR);
+			float randG = UnityEngine.Random.Range (0, numUniq);
+			//Debug.Log ("RandG: " + randG);
+			float randB = UnityEngine.Random.Range (0, numUniq);
+			//Debug.Log ("RandB: " + randB);
+
+			colorMap.Add(species, new Color (UnityEngine.Random.Range (randR * step, (randR + 1) * step), 
+				UnityEngine.Random.Range (randG * step, (randG + 1) * step),
+				UnityEngine.Random.Range (randB * step, (randB + 1) * step)));
 		}			
 	}
 }

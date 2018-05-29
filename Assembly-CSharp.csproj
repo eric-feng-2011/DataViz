@@ -61,6 +61,7 @@
      <Compile Include="Assets\SampleScenes\Scripts\SlowMoButton.cs" />
      <Compile Include="Assets\Scripts\CSVReader.cs" />
      <Compile Include="Assets\Scripts\DataPlotter.cs" />
+     <Compile Include="Assets\Scripts\DataPlotterPCA.cs" />
      <Compile Include="Assets\Scripts\OrientLabels.cs" />
      <Compile Include="Assets\Scripts\Test.cs" />
      <None Include="Assets\SampleScenes\Shaders\Skybox-Procedural.shader" />
