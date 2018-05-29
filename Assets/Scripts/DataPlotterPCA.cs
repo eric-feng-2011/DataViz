@@ -34,12 +34,16 @@ public class DataPlotterPCA : MonoBehaviour {
 	private List<Dictionary<string, object>> pointList;
 
 	//Dictionary to hold mappings from species to color
-	private Dictionary<String, Color> colorMap;
+	private Dictionary<string, Color> colorMap;
+
+	//Dictionary to hold the solid color images derived from the colorMap
+	private Dictionary<string, Texture2D> solidImages;
 
 	// Use this for initialization
 	void Start () {
 
 		colorMap = new Dictionary<String, Color>();
+		solidImages = new Dictionary<string, Texture2D> ();
 
 		// Set pointlist to results of function Reader with argument inputfile
 		pointList = CSVReader.Read(inputfile);
@@ -50,6 +54,7 @@ public class DataPlotterPCA : MonoBehaviour {
 		// Declare list of strings, fill with keys (column names)
 		List<string> columnList = new List<string>(pointList[1].Keys);
 		createColorMap (columnList);
+		determineSolids ();
 
 		//Calculate PCA and project data onto three most significant components before plotting
 		double[][] transformedPoints = calcPCAProject ();
@@ -96,6 +101,37 @@ public class DataPlotterPCA : MonoBehaviour {
 
 			// Gets material color and sets it to a new RGBA color we define
 			dataPoint.GetComponent<Renderer>().material.color = colorMap[type];
+		}
+	}
+
+	private void determineSolids() {
+		List<string> keys = new List<string>(colorMap.Keys);
+		for (int i = 0; i < keys.Count; i++) {
+			Texture2D solidImage = new Texture2D (20, 20);
+			string key = keys [i];
+			Color[] legendColor = new Color[400];
+			for (int j = 0; j < 400; j++) {
+				legendColor [j] = colorMap [key];
+			}
+			solidImage.SetPixels (legendColor);
+			solidImage.Apply ();
+
+			solidImages.Add (key, solidImage);
+		}
+	}
+
+	//Create graph legend
+	void OnGUI() {
+
+		List<string> keys = new List<string>(solidImages.Keys);
+		//Debug.Log (numLegend);
+
+		// Make a background box of height '(numLegend + 1) * 20'
+		GUI.Box(new Rect(10, 10, 100, (keys.Count + 1) * 20), "Graph Legend");
+
+		for (int i = 1; i <= keys.Count; i++) {
+			GUI.Label (new Rect (15, 10 + i * 20, 60, 20), keys[i - 1]); 
+			GUI.DrawTexture (new Rect (80, 10 + i * 20, 15, 15), solidImages[keys[i - 1]]);
 		}
 	}
 
