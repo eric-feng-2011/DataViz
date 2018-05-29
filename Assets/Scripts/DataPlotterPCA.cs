@@ -12,21 +12,12 @@ using Accord.Statistics.Analysis;
 //PCA Method: Take in N columns of data, calculate PCA, and project data onto first 3 principal components
 public class DataPlotterPCA : MonoBehaviour {
 
-	//Scale the graph
-	public float plotScale = 10;
-	public float offset = 0.25f;
-
 	// The prefab for the data points that will be instantiated
 	public GameObject PointHolder;
 	public GameObject PointPrefab;
-	public GameObject graph;
 	public GameObject graphHolder;
 	public GameObject textLabel;
 	public GameObject labelHolder;
-
-	public LineRenderer PCA1;
-	public LineRenderer PCA2;
-	public LineRenderer PCA3;
 
 	public int categoryColumn = 5;
 
@@ -36,20 +27,23 @@ public class DataPlotterPCA : MonoBehaviour {
 	// Name of the input file, no extension
 	public string inputfile;
 
+	//Scale the graph
+	private float scale = 10;
+
 	// List for holding data from CSV reader
 	private List<Dictionary<string, object>> pointList;
 
 	//Dictionary to hold mappings from species to color
-	private Dictionary<String, Color> colorMap;
+	private Dictionary<string, Color> colorMap;
+
+	//Dictionary to hold the solid color images derived from the colorMap
+	private Dictionary<string, Texture2D> solidImages;
 
 	// Use this for initialization
 	void Start () {
 
 		colorMap = new Dictionary<String, Color>();
-
-		GameObject graph = Instantiate (graphHolder, new Vector3 (0, 0, 0), Quaternion.identity);
-		graph.transform.localScale *= plotScale / 10f;
-		graph.transform.parent = graphHolder.transform;
+		solidImages = new Dictionary<string, Texture2D> ();
 
 		// Set pointlist to results of function Reader with argument inputfile
 		pointList = CSVReader.Read(inputfile);
@@ -60,6 +54,7 @@ public class DataPlotterPCA : MonoBehaviour {
 		// Declare list of strings, fill with keys (column names)
 		List<string> columnList = new List<string>(pointList[1].Keys);
 		createColorMap (columnList);
+		determineSolids ();
 
 		//Calculate PCA and project data onto three most significant components before plotting
 		double[][] transformedPoints = calcPCAProject ();
@@ -69,11 +64,14 @@ public class DataPlotterPCA : MonoBehaviour {
 
 	private void plotPoints(double[][] pointXYZ, List<string> columnList) {
 
-		float minX = Mathf.Abs(FindMinValue (pointXYZ.GetColumn (0)));
-		float minY = Mathf.Abs(FindMinValue (pointXYZ.GetColumn (1)));
-		float minZ = Mathf.Abs(FindMinValue (pointXYZ.GetColumn (2)));
+//		Instantiate at point XYZ added onto mean XYZ in order to ensure all data is "above ground"
+//		float minX = Mathf.Abs(FindMinValue (pointXYZ.GetColumn (0)));
+//		float minY = Mathf.Abs(FindMinValue (pointXYZ.GetColumn (1)));
+//		float minZ = Mathf.Abs(FindMinValue (pointXYZ.GetColumn (2)));
+//		Vector3 minVector = new Vector3(minX, minY, minZ);
 
-		Vector3 minVector = new Vector3(minX, minY, minZ);
+		float maxX = Mathf.Abs (FindMaxValue (pointXYZ.GetColumn (0)));
+		scale = 10 / maxX;
 
 		//Loop through Pointlist, obtain points, and plot
 		for (var i = 0; i < pointXYZ.Length; i++)
@@ -85,10 +83,9 @@ public class DataPlotterPCA : MonoBehaviour {
 			float z = Convert.ToSingle(pointXYZ[i][2]);
 
 			// Instantiate as gameobject variable so that it can be manipulated within loop
-			// Instantiate at point XYZ added onto mean XYZ in order to ensure all data is "above ground"
 			GameObject dataPoint = Instantiate(
 				PointPrefab, 
-				new Vector3(x, y, z) + minVector, 
+				new Vector3(x, y, z) * scale, 
 				Quaternion.identity);
 			// Make dataPoint child of PointHolder object 
 			dataPoint.transform.parent = PointHolder.transform;
@@ -97,13 +94,44 @@ public class DataPlotterPCA : MonoBehaviour {
 			//Debug.Log ("Species of point " + i + ": " + species);
 
 			// Assigns original values to dataPointName
-			string dataPointName = type + " " + i;
+			string dataPointName = "(" + x + ", " + y + ", " + z + ")";
 
 			// Assigns name to the prefab
 			dataPoint.transform.name = dataPointName;
 
 			// Gets material color and sets it to a new RGBA color we define
 			dataPoint.GetComponent<Renderer>().material.color = colorMap[type];
+		}
+	}
+
+	private void determineSolids() {
+		List<string> keys = new List<string>(colorMap.Keys);
+		for (int i = 0; i < keys.Count; i++) {
+			Texture2D solidImage = new Texture2D (20, 20);
+			string key = keys [i];
+			Color[] legendColor = new Color[400];
+			for (int j = 0; j < 400; j++) {
+				legendColor [j] = colorMap [key];
+			}
+			solidImage.SetPixels (legendColor);
+			solidImage.Apply ();
+
+			solidImages.Add (key, solidImage);
+		}
+	}
+
+	//Create graph legend
+	void OnGUI() {
+
+		List<string> keys = new List<string>(solidImages.Keys);
+		//Debug.Log (numLegend);
+
+		// Make a background box of height '(numLegend + 1) * 20'
+		GUI.Box(new Rect(10, 10, 100, (keys.Count + 1) * 20), "Graph Legend");
+
+		for (int i = 1; i <= keys.Count; i++) {
+			GUI.Label (new Rect (15, 10 + i * 20, 60, 20), keys[i - 1]); 
+			GUI.DrawTexture (new Rect (80, 10 + i * 20, 15, 15), solidImages[keys[i - 1]]);
 		}
 	}
 
@@ -123,33 +151,33 @@ public class DataPlotterPCA : MonoBehaviour {
 		point_Count.transform.parent = labelHolder.transform;
 
 		//Update axis titles to Principle Components
-		GameObject x_Axis = Instantiate(textLabel, new Vector3(plotScale, 3, 0), Quaternion.identity);
+		GameObject x_Axis = Instantiate(textLabel, new Vector3(10, 3, 0), Quaternion.identity);
 		x_Axis.GetComponent<TextMesh> ().text = "X-Axis: PCA1"; 
 		x_Axis.transform.parent = labelHolder.transform;
 
-		GameObject y_Axis = Instantiate(textLabel, new Vector3(3, plotScale, 0), Quaternion.identity);
+		GameObject y_Axis = Instantiate(textLabel, new Vector3(3, 10, 0), Quaternion.identity);
 		y_Axis.GetComponent<TextMesh> ().text = "Y-Axis: PCA2"; 
 		y_Axis.transform.parent = labelHolder.transform;
 
-		GameObject z_Axis = Instantiate(textLabel, new Vector3(0, 3, plotScale), Quaternion.identity);
+		GameObject z_Axis = Instantiate(textLabel, new Vector3(0, 3, 10), Quaternion.identity);
 		z_Axis.GetComponent<TextMesh> ().text = "Z-Axis: PCA3"; 
 		z_Axis.transform.parent = labelHolder.transform;
 
-		//numberAxis ();
+		numberAxis ();
 	}
 
 	private void numberAxis() {
-		for (int i = 0; i <= plotScale; i += 2) {
+		for (int i = -10; i <= 10; i += 2) {
 			GameObject xNum = Instantiate (textLabel, new Vector3 (i, 0, 0), Quaternion.identity);
-			xNum.GetComponent<TextMesh> ().text = i.ToString ("0");
+			xNum.GetComponent<TextMesh> ().text = (i/scale).ToString ("0.0");
 			xNum.transform.parent = graphHolder.transform;
 
 			GameObject yNum = Instantiate (textLabel, new Vector3 (0, i, 0), Quaternion.identity);
-			yNum.GetComponent<TextMesh> ().text = i.ToString ("0");
+			yNum.GetComponent<TextMesh> ().text = (i/scale).ToString ("0.0");
 			yNum.transform.parent = graphHolder.transform;
 
 			GameObject zNum = Instantiate (textLabel, new Vector3 (0, 0, i), Quaternion.identity);
-			zNum.GetComponent<TextMesh> ().text = i.ToString ("0");
+			zNum.GetComponent<TextMesh> ().text = (i/scale).ToString ("0.0");
 			zNum.transform.parent = graphHolder.transform;
 		}
 	}
@@ -198,6 +226,20 @@ public class DataPlotterPCA : MonoBehaviour {
 		line.material = new Material (Shader.Find ("Particles/Additive"));
 		line.startColor = color;
 		line.endColor = color;
+	}
+
+	private float FindMaxValue(double[] array)
+	{
+		double max = double.MinValue;
+
+		//Loop through array, overwrite existing minValue if new value is smaller
+		for (var i = 0; i < array.Length; i++)
+		{
+			if (array[i] > max)
+				max = array[i];
+		}
+
+		return (float) max;
 	}
 
 	private float FindMinValue(double[] array)
