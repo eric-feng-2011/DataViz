@@ -6,7 +6,14 @@ using Accord;
 using Accord.Math;
 using Accord.Statistics.Analysis;
 
-//TODO: Determine how to scale graph properly
+//TODO: ADD UI in order to flip data and calculate PCA for transpose
+//TODO: Allow for switching of data while in application
+//TODO: If have extra time, add option for changing color of data points / categories
+//TODO: And of course, add VR adaption
+
+//Notes: Elements that should be included in the UI included everything that is currently part of the
+//Unity Inspector and is not a GameObject. In addition need bool for data flip and a button that would
+//recalulate PCA after new inputs are all put in.
 
 //@source Big Data Social Science Fellows @ Penn State - Plot Points 
 //PCA Method: Take in N columns of data, calculate PCA, and project data onto first 3 principal components
@@ -18,8 +25,10 @@ public class DataPlotterPCA : MonoBehaviour {
 	public GameObject graphHolder;
 	public GameObject textLabel;
 	public GameObject labelHolder;
+	public GameObject graph;
 
-	public int categoryColumn = 5;
+	public bool knownCategories = false;
+	public int categoryColumn;
 
 	//List for data columns to exclude
 	public List<int> excludeColumns;
@@ -28,7 +37,9 @@ public class DataPlotterPCA : MonoBehaviour {
 	public string inputfile;
 
 	//Scale the graph
-	private float scale = 10;
+	[Range(1, 100)]
+	public int scale = 10;
+	private float newScale;
 
 	// List for holding data from CSV reader
 	private List<Dictionary<string, object>> pointList;
@@ -42,6 +53,8 @@ public class DataPlotterPCA : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+		graph.transform.localScale *= scale / 10;
+
 		colorMap = new Dictionary<String, Color>();
 		solidImages = new Dictionary<string, Texture2D> ();
 
@@ -53,8 +66,10 @@ public class DataPlotterPCA : MonoBehaviour {
 
 		// Declare list of strings, fill with keys (column names)
 		List<string> columnList = new List<string>(pointList[1].Keys);
-		createColorMap (columnList);
-		determineSolids ();
+		if (knownCategories) {
+			createColorMap (columnList);
+			determineSolids ();
+		}
 
 		//Calculate PCA and project data onto three most significant components before plotting
 		double[][] transformedPoints = calcPCAProject ();
@@ -71,7 +86,7 @@ public class DataPlotterPCA : MonoBehaviour {
 //		Vector3 minVector = new Vector3(minX, minY, minZ);
 
 		float maxX = Mathf.Abs (FindMaxValue (pointXYZ.GetColumn (0)));
-		scale = 10 / maxX;
+		newScale = scale / maxX;
 
 		//Loop through Pointlist, obtain points, and plot
 		for (var i = 0; i < pointXYZ.Length; i++)
@@ -85,13 +100,10 @@ public class DataPlotterPCA : MonoBehaviour {
 			// Instantiate as gameobject variable so that it can be manipulated within loop
 			GameObject dataPoint = Instantiate(
 				PointPrefab, 
-				new Vector3(x, y, z) * scale, 
+				new Vector3(x, y, z) * newScale, 
 				Quaternion.identity);
 			// Make dataPoint child of PointHolder object 
 			dataPoint.transform.parent = PointHolder.transform;
-
-			string type = Convert.ToString(pointList [i] [columnList[categoryColumn]]);
-			//Debug.Log ("Species of point " + i + ": " + species);
 
 			// Assigns original values to dataPointName
 			string dataPointName = "(" + x + ", " + y + ", " + z + ")";
@@ -100,7 +112,11 @@ public class DataPlotterPCA : MonoBehaviour {
 			dataPoint.transform.name = dataPointName;
 
 			// Gets material color and sets it to a new RGBA color we define
-			dataPoint.GetComponent<Renderer>().material.color = colorMap[type];
+			if (knownCategories) {
+				string type = Convert.ToString(pointList [i] [columnList[categoryColumn]]);
+				//Debug.Log ("Species of point " + i + ": " + species);
+				dataPoint.GetComponent<Renderer> ().material.color = colorMap [type];
+			}
 		}
 	}
 
@@ -164,20 +180,21 @@ public class DataPlotterPCA : MonoBehaviour {
 		z_Axis.transform.parent = labelHolder.transform;
 
 		numberAxis ();
+
 	}
 
 	private void numberAxis() {
-		for (int i = -10; i <= 10; i += 2) {
+		for (int i = -scale; i <= scale; i += scale / 5) {
 			GameObject xNum = Instantiate (textLabel, new Vector3 (i, 0, 0), Quaternion.identity);
-			xNum.GetComponent<TextMesh> ().text = (i/scale).ToString ("0.0");
+			xNum.GetComponent<TextMesh> ().text = (i/newScale).ToString ("0.0");
 			xNum.transform.parent = graphHolder.transform;
 
 			GameObject yNum = Instantiate (textLabel, new Vector3 (0, i, 0), Quaternion.identity);
-			yNum.GetComponent<TextMesh> ().text = (i/scale).ToString ("0.0");
+			yNum.GetComponent<TextMesh> ().text = (i/newScale).ToString ("0.0");
 			yNum.transform.parent = graphHolder.transform;
 
 			GameObject zNum = Instantiate (textLabel, new Vector3 (0, 0, i), Quaternion.identity);
-			zNum.GetComponent<TextMesh> ().text = (i/scale).ToString ("0.0");
+			zNum.GetComponent<TextMesh> ().text = (i/newScale).ToString ("0.0");
 			zNum.transform.parent = graphHolder.transform;
 		}
 	}
@@ -193,11 +210,11 @@ public class DataPlotterPCA : MonoBehaviour {
 		//Iterates through the original data and converts the wanted data into the input matrix
 		for (int i = 0; i < pointList.Count; i++)
 		{
-			inputMatrix[i] = new double[dataLength - excludeColumns.Count - 1];
+			inputMatrix[i] = new double[dataLength - excludeColumns.Count];
 			int index = 0;
 			List<object> data = new List<object>(pointList [i].Values);
 			for (int j = 0; j < dataLength; j++) {
-				if (j == categoryColumn || excludeColumns.Contains(j)) {
+				if ((knownCategories && j == categoryColumn) || excludeColumns.Contains(j)) {
 					continue;
 				}
 				// Get data in pointList at ith "row"
@@ -288,5 +305,9 @@ public class DataPlotterPCA : MonoBehaviour {
 				UnityEngine.Random.Range (randG * step, (randG + 1) * step),
 				UnityEngine.Random.Range (randB * step, (randB + 1) * step)));
 		}			
+	}
+
+	public void reCalculatePCA() {
+
 	}
 }
