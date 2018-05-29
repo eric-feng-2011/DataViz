@@ -46,3 +46,6 @@
 /Users/ericfeng/Desktop/Berkeley/VR@B/BioSNTR_Plot_Points/Temp/bin/Debug/Unity.Cecil.Mdb.dll
 /Users/ericfeng/Desktop/Berkeley/VR@B/BioSNTR_Plot_Points/Temp/bin/Debug/UnityEditor.iOS.Extensions.Xcode.dll
 /Users/ericfeng/Desktop/Berkeley/VR@B/BioSNTR_Plot_Points/Temp/bin/Debug/UnityEditor.iOS.Extensions.Xcode.xml
+/Users/ericfeng/Desktop/Berkeley/VR@B/BioSNTR_Plot_Points/Temp/bin/Debug/Accord.dll
+/Users/ericfeng/Desktop/Berkeley/VR@B/BioSNTR_Plot_Points/Temp/bin/Debug/Accord.Math.dll
+/Users/ericfeng/Desktop/Berkeley/VR@B/BioSNTR_Plot_Points/Temp/bin/Debug/Accord.Statistics.dll

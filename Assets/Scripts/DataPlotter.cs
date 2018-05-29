@@ -6,9 +6,6 @@ using Accord;
 using Accord.Math;
 using Accord.Statistics.Analysis;
 
-//TODO: Plot based on Color. 
-//TODO: Accept more than 3 columns of data, but project only onto three chosen dimensions
-
 //@source Big Data Social Science Fellows @ Penn State - Plot Points 
 //PCA Method: Take in 3 columns of data and plot PCA and points in 3D with standard basis
 public class DataPlotter : MonoBehaviour {

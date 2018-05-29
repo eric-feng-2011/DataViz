@@ -385,6 +385,7 @@ GameObject:
   m_Component:
   - component: {fileID: 497599400}
   - component: {fileID: 497599399}
+  - component: {fileID: 497599402}
   - component: {fileID: 497599401}
   m_Layer: 0
   m_Name: Plotter
@@ -399,7 +400,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 497599398}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5b0e12bb0a4f94342bcd135149bebc04, type: 3}
   m_Name: 
@@ -419,6 +420,7 @@ MonoBehaviour:
   columnX: 1
   columnY: 2
   columnZ: 3
+  speciesColumn: 5
   inputfile: iris
 --- !u!4 &497599400
 Transform:
@@ -446,6 +448,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   faceCamera: 1
   targetTag: Label
+--- !u!114 &497599402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 497599398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 399b9b13a77504f5da35ac5eebdb0876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  plotScale: 10
+  offset: 0.25
+  PointHolder: {fileID: 1527222853}
+  PointPrefab: {fileID: 1784080490462214, guid: 189a2445c8d2c4e25b1531f609a6d541,
+    type: 2}
+  graph: {fileID: 1187016170459330, guid: 2b254cbefe6f44a4da7eae6ba0842185, type: 2}
+  graphHolder: {fileID: 477537334}
+  textLabel: {fileID: 1645455888213244, guid: 4264fa2c9e4e5466b871648c9aec1c53, type: 2}
+  labelHolder: {fileID: 1801148577}
+  PCA1: {fileID: 328987966}
+  PCA2: {fileID: 1898559180}
+  PCA3: {fileID: 50343076}
+  categoryColumn: 5
+  excludeColumns: 00000000
+  inputfile: iris
 --- !u!1 &595111365
 GameObject:
   m_ObjectHideFlags: 0
