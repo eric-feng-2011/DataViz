@@ -19,7 +19,8 @@ public class DataPlotterPCA : MonoBehaviour {
 	public GameObject textLabel;
 	public GameObject labelHolder;
 
-	public int categoryColumn = 5;
+	public bool knownCategories = false;
+	public int categoryColumn;
 
 	//List for data columns to exclude
 	public List<int> excludeColumns;
@@ -28,7 +29,7 @@ public class DataPlotterPCA : MonoBehaviour {
 	public string inputfile;
 
 	//Scale the graph
-	private float scale = 10;
+	private float scale = 100;
 
 	// List for holding data from CSV reader
 	private List<Dictionary<string, object>> pointList;
@@ -53,8 +54,10 @@ public class DataPlotterPCA : MonoBehaviour {
 
 		// Declare list of strings, fill with keys (column names)
 		List<string> columnList = new List<string>(pointList[1].Keys);
-		createColorMap (columnList);
-		determineSolids ();
+		if (knownCategories) {
+			createColorMap (columnList);
+			determineSolids ();
+		}
 
 		//Calculate PCA and project data onto three most significant components before plotting
 		double[][] transformedPoints = calcPCAProject ();
@@ -71,7 +74,7 @@ public class DataPlotterPCA : MonoBehaviour {
 //		Vector3 minVector = new Vector3(minX, minY, minZ);
 
 		float maxX = Mathf.Abs (FindMaxValue (pointXYZ.GetColumn (0)));
-		scale = 10 / maxX;
+		scale = 100 / maxX;
 
 		//Loop through Pointlist, obtain points, and plot
 		for (var i = 0; i < pointXYZ.Length; i++)
@@ -90,9 +93,6 @@ public class DataPlotterPCA : MonoBehaviour {
 			// Make dataPoint child of PointHolder object 
 			dataPoint.transform.parent = PointHolder.transform;
 
-			string type = Convert.ToString(pointList [i] [columnList[categoryColumn]]);
-			//Debug.Log ("Species of point " + i + ": " + species);
-
 			// Assigns original values to dataPointName
 			string dataPointName = "(" + x + ", " + y + ", " + z + ")";
 
@@ -100,7 +100,11 @@ public class DataPlotterPCA : MonoBehaviour {
 			dataPoint.transform.name = dataPointName;
 
 			// Gets material color and sets it to a new RGBA color we define
-			dataPoint.GetComponent<Renderer>().material.color = colorMap[type];
+			if (knownCategories) {
+				string type = Convert.ToString(pointList [i] [columnList[categoryColumn]]);
+				//Debug.Log ("Species of point " + i + ": " + species);
+				dataPoint.GetComponent<Renderer> ().material.color = colorMap [type];
+			}
 		}
 	}
 
@@ -167,7 +171,7 @@ public class DataPlotterPCA : MonoBehaviour {
 	}
 
 	private void numberAxis() {
-		for (int i = -10; i <= 10; i += 2) {
+		for (int i = -100; i <= 100; i += 10) {
 			GameObject xNum = Instantiate (textLabel, new Vector3 (i, 0, 0), Quaternion.identity);
 			xNum.GetComponent<TextMesh> ().text = (i/scale).ToString ("0.0");
 			xNum.transform.parent = graphHolder.transform;
@@ -193,11 +197,11 @@ public class DataPlotterPCA : MonoBehaviour {
 		//Iterates through the original data and converts the wanted data into the input matrix
 		for (int i = 0; i < pointList.Count; i++)
 		{
-			inputMatrix[i] = new double[dataLength - excludeColumns.Count - 1];
+			inputMatrix[i] = new double[dataLength - excludeColumns.Count];
 			int index = 0;
 			List<object> data = new List<object>(pointList [i].Values);
 			for (int j = 0; j < dataLength; j++) {
-				if (j == categoryColumn || excludeColumns.Contains(j)) {
+				if ((knownCategories && j == categoryColumn) || excludeColumns.Contains(j)) {
 					continue;
 				}
 				// Get data in pointList at ith "row"
