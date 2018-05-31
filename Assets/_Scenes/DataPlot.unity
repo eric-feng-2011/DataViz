@@ -301,6 +301,7 @@ MonoBehaviour:
   textLabel: {fileID: 1645455888213244, guid: 4264fa2c9e4e5466b871648c9aec1c53, type: 2}
   labelHolder: {fileID: 1801148577}
   graph: {fileID: 2075416993}
+  flipData: 0
   knownCategories: 1
   categoryColumn: 5
   excludeColumns: 00000000
