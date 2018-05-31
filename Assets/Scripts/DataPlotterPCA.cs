@@ -6,10 +6,10 @@ using Accord;
 using Accord.Math;
 using Accord.Statistics.Analysis;
 
-//TODO: ADD UI in order to flip data and calculate PCA for transpose
-//TODO: When flipping, have to take into account that legend and coloring scheme may no longer be relevant
-//TODO: Allow for switching of data while in application
-//TODO: If have extra time, add option for changing color of data points / categories
+//TODO: When making new plot, graph is not scaling well. Additionally, previous labels still there,
+//make 3D graph confusing. Not only graph. EVERYTHING is still there. Need to get rid of previous plot
+//TODO: Getting errors regarding color scheme and colorMap dictionary. Probably need to clear when 
+//recalculating
 //TODO: And of course, add VR adaption
 
 //Notes: Elements that should be included in the UI included everything that is currently part of the
@@ -58,10 +58,18 @@ public class DataPlotterPCA : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		graph.transform.localScale *= scale / 10.0f;
-
 		colorMap = new Dictionary<String, Color>();
 		solidImages = new Dictionary<string, Texture2D> ();
+
+		doEverything ();
+	}
+
+	public void doEverything() {
+
+		graph.transform.localScale *= scale / 10.0f;
+
+		colorMap.Clear ();
+		solidImages.Clear ();
 
 		// Set pointlist to results of function Reader with argument inputfile
 		pointList = CSVReader.Read(inputfile);
@@ -325,9 +333,5 @@ public class DataPlotterPCA : MonoBehaviour {
 				UnityEngine.Random.Range (randG * step, (randG + 1) * step),
 				UnityEngine.Random.Range (randB * step, (randB + 1) * step)));
 		}			
-	}
-
-	public void reCalculatePCA() {
-
 	}
 }
