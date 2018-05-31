@@ -9,7 +9,6 @@ VR will be Oculus Rift, but there may be a future adaptation for HTC Vive if tim
 The PCA implementations are from Accord Version 3.0.2 in fear that more modern versions would not be compatible 
 with Unity 2017.3 (the version of Unity used in this project).
 
-Various portions of the code come from third-party sources including the CSV-Reader from PrinzEugn
-and the basic data plotting functionality from Big Data Social Science Fellows @ Penn State
+Third-party code includes the CSV-Reader from PrinzEugn and the basic data plotting functionality from Big Data Social Science Fellows @ Penn State. 
 
 Special recognition to Professor Xijin Ge from SDSU who acted as my advisor for the duration of the project.
