@@ -7,6 +7,7 @@ using Accord.Math;
 using Accord.Statistics.Analysis;
 
 //TODO: ADD UI in order to flip data and calculate PCA for transpose
+//TODO: When flipping, have to take into account that legend and coloring scheme may no longer be relevant
 //TODO: Allow for switching of data while in application
 //TODO: If have extra time, add option for changing color of data points / categories
 //TODO: And of course, add VR adaption
@@ -27,6 +28,7 @@ public class DataPlotterPCA : MonoBehaviour {
 	public GameObject labelHolder;
 	public GameObject graph;
 
+	public bool flipData = false;
 	public bool knownCategories = false;
 	public int categoryColumn;
 
@@ -50,10 +52,13 @@ public class DataPlotterPCA : MonoBehaviour {
 	//Dictionary to hold the solid color images derived from the colorMap
 	private Dictionary<string, Texture2D> solidImages;
 
+	//Private list to hold the keys of the dictionary in data
+	private List<string> columnList;
+
 	// Use this for initialization
 	void Start () {
 
-		graph.transform.localScale *= scale / 10;
+		graph.transform.localScale *= scale / 10.0f;
 
 		colorMap = new Dictionary<String, Color>();
 		solidImages = new Dictionary<string, Texture2D> ();
@@ -65,19 +70,19 @@ public class DataPlotterPCA : MonoBehaviour {
 		//Debug.Log(pointList);
 
 		// Declare list of strings, fill with keys (column names)
-		List<string> columnList = new List<string>(pointList[1].Keys);
+		columnList = new List<string>(pointList[1].Keys);
 		if (knownCategories) {
-			createColorMap (columnList);
+			createColorMap ();
 			determineSolids ();
 		}
 
 		//Calculate PCA and project data onto three most significant components before plotting
 		double[][] transformedPoints = calcPCAProject ();
-		plotPoints (transformedPoints, columnList);
+		plotPoints (transformedPoints);
 		AssignLabels ();
 	}
 
-	private void plotPoints(double[][] pointXYZ, List<string> columnList) {
+	private void plotPoints(double[][] pointXYZ) {
 
 //		Instantiate at point XYZ added onto mean XYZ in order to ensure all data is "above ground"
 //		float minX = Mathf.Abs(FindMinValue (pointXYZ.GetColumn (0)));
@@ -138,6 +143,10 @@ public class DataPlotterPCA : MonoBehaviour {
 
 	//Create graph legend
 	void OnGUI() {
+
+		if (!knownCategories) {
+			return;
+		}
 
 		List<string> keys = new List<string>(solidImages.Keys);
 		//Debug.Log (numLegend);
@@ -208,11 +217,17 @@ public class DataPlotterPCA : MonoBehaviour {
 		int dataLength = pointList [1].Count;
 
 		//Iterates through the original data and converts the wanted data into the input matrix
-		for (int i = 0; i < pointList.Count; i++)
+		for (int i = 0; i < inputMatrix.Length; i++)
 		{
-			inputMatrix[i] = new double[dataLength - excludeColumns.Count];
+			if (knownCategories) {
+				inputMatrix [i] = new double[dataLength - excludeColumns.Count - 1];
+			} else {
+				inputMatrix [i] = new double[dataLength - excludeColumns.Count];
+			}
+
 			int index = 0;
 			List<object> data = new List<object>(pointList [i].Values);
+
 			for (int j = 0; j < dataLength; j++) {
 				if ((knownCategories && j == categoryColumn) || excludeColumns.Contains(j)) {
 					continue;
@@ -222,6 +237,11 @@ public class DataPlotterPCA : MonoBehaviour {
 				//Debug.Log ("value at " + i + ", " + index + ": " + inputMatrix [i] [index]);
 				index++;
 			}
+		}
+
+//		Somehow, this is throwing the data into an infinite loop. Or maybe my mac is not powerful enough to run the computations
+		if (flipData) {
+			inputMatrix = inputMatrix.Transpose ();
 		}
 
 		PrincipalComponentAnalysis pca = new PrincipalComponentAnalysis(inputMatrix, AnalysisMethod.Center);
@@ -274,7 +294,7 @@ public class DataPlotterPCA : MonoBehaviour {
 	}
 		
 	//Create the colorMap that contains unique colors for each species
-	private void createColorMap(List<string> columnList) {
+	private void createColorMap() {
 
 		int numUniq = 0;
 		HashSet<string> trackSpecies = new HashSet<string> ();
