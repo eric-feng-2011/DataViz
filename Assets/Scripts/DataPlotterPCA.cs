@@ -6,6 +6,7 @@ using Accord;
 using Accord.Math;
 using Accord.Statistics.Analysis;
 
+//TODO: In addition to the scaling problems mentioned previously, scaling in general is really bad.
 //TODO: When making new plot, graph is not scaling well. Additionally, previous labels still there,
 //make 3D graph confusing. Not only graph. EVERYTHING is still there. Need to get rid of previous plot
 //TODO: Getting errors regarding color scheme and colorMap dictionary. Probably need to clear when 
@@ -55,8 +56,21 @@ public class DataPlotterPCA : MonoBehaviour {
 	//Private list to hold the keys of the dictionary in data
 	private List<string> columnList;
 
+	private Dictionary<string, bool> TFText = new Dictionary<string, bool>()
+	{{"False", false}, {"True", true}};
+
+	//PlayerPrefs keys
+	string flipDataKey = "flipData";
+	string knownCategoriesKey = "knownCategories";
+	string categoryColumnKey = "categoryColumn";
+	string inputFileKey = "inputFile";
+	string scaleKey = "scale";
+	string excludeColKey = "excludeColumn";
+
 	// Use this for initialization
 	void Start () {
+
+		checkPlayerPrefs ();
 
 		colorMap = new Dictionary<String, Color>();
 		solidImages = new Dictionary<string, Texture2D> ();
@@ -333,5 +347,30 @@ public class DataPlotterPCA : MonoBehaviour {
 				UnityEngine.Random.Range (randG * step, (randG + 1) * step),
 				UnityEngine.Random.Range (randB * step, (randB + 1) * step)));
 		}			
+	}
+
+	private void checkPlayerPrefs() {
+		if (PlayerPrefs.HasKey (flipDataKey)) {
+			flipData = PlayerPrefsX.GetBool (flipDataKey);
+		}
+		if (PlayerPrefs.HasKey (categoryColumnKey)) {
+			categoryColumn = PlayerPrefs.GetInt (categoryColumnKey);
+		}
+		if (PlayerPrefs.HasKey (knownCategoriesKey)) {
+			knownCategories = PlayerPrefsX.GetBool (knownCategoriesKey);
+		}
+		if (PlayerPrefs.HasKey (inputFileKey)) {
+			inputfile = PlayerPrefs.GetString (inputFileKey);
+		}
+		if (PlayerPrefs.HasKey (scaleKey)) {
+			scale = PlayerPrefs.GetInt (scaleKey);
+		}
+		int excludeCount = excludeColumns.Count;
+		excludeColumns.Clear ();
+		for (int i = 0; i < excludeCount; i++) {
+			if (PlayerPrefs.HasKey (excludeColKey + i.ToString ())) {
+				excludeColumns.Add (PlayerPrefs.GetInt (excludeColKey + i.ToString ()));
+			}
+		}
 	}
 }

@@ -63,6 +63,7 @@
      <Compile Include="Assets\Scripts\DataPlotter.cs" />
      <Compile Include="Assets\Scripts\DataPlotterPCA.cs" />
      <Compile Include="Assets\Scripts\OrientLabels.cs" />
+     <Compile Include="Assets\Scripts\PlayerPrefsX.cs" />
      <Compile Include="Assets\Scripts\Test.cs" />
      <Compile Include="Assets\Scripts\UIBehavior.cs" />
      <None Include="Assets\SampleScenes\Shaders\Skybox-Procedural.shader" />
