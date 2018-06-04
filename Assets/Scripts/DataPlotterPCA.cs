@@ -6,16 +6,7 @@ using Accord;
 using Accord.Math;
 using Accord.Statistics.Analysis;
 
-//TODO: In addition to the scaling problems mentioned previously, scaling in general is really bad.
-//TODO: When making new plot, graph is not scaling well. Additionally, previous labels still there,
-//make 3D graph confusing. Not only graph. EVERYTHING is still there. Need to get rid of previous plot
-//TODO: Getting errors regarding color scheme and colorMap dictionary. Probably need to clear when 
-//recalculating
 //TODO: And of course, add VR adaption
-
-//Notes: Elements that should be included in the UI included everything that is currently part of the
-//Unity Inspector and is not a GameObject. In addition need bool for data flip and a button that would
-//recalulate PCA after new inputs are all put in.
 
 //@source Big Data Social Science Fellows @ Penn State - Plot Points 
 //PCA Method: Take in N columns of data, calculate PCA, and project data onto first 3 principal components
@@ -67,10 +58,11 @@ public class DataPlotterPCA : MonoBehaviour {
 	string scaleKey = "scale";
 	string excludeColKey = "excludeColumn";
 
+	void Awake() {
+		checkPlayerPrefs ();
+	}
 	// Use this for initialization
 	void Start () {
-
-		checkPlayerPrefs ();
 
 		colorMap = new Dictionary<String, Color>();
 		solidImages = new Dictionary<string, Texture2D> ();
