@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIBehavior : MonoBehaviour {
 
@@ -16,6 +17,13 @@ public class UIBehavior : MonoBehaviour {
 
 	private Dictionary<bool, string> TFText = new Dictionary<bool, string>()
 					{{false, "False"}, {true, "True"}};
+
+	string flipDataKey = "flipData";
+	string knownCategoriesKey = "knownCategories";
+	string categoryColumnKey = "categoryColumn";
+	string inputFileKey = "inputFile";
+	string scaleKey = "scale";
+	string excludeColKey = "excludeColumn";
 
 	// Use this for initialization
 	void Start () {
@@ -70,9 +78,21 @@ public class UIBehavior : MonoBehaviour {
 	}
 
 	public void reCalculatePCA() {
-		plotterRef.graph.transform.localScale *= 10.0f / plotterRef.scale;
+//		plotterRef.graph.transform.localScale *= 10.0f / plotterRef.scale;
+//
+//		plotterRef.doEverything ();
 
-		plotterRef.doEverything ();
+		//Keep track of the variables that the user inputs
+		PlayerPrefs.SetInt(categoryColumnKey, plotterRef.categoryColumn);
+		PlayerPrefs.SetString (inputFileKey, plotterRef.inputfile);
+		PlayerPrefs.SetInt (scaleKey, plotterRef.scale);
+		for (int i = 0; i < plotterRef.excludeColumns.Count; i++) {
+			PlayerPrefs.SetInt (excludeColKey + i.ToString(), plotterRef.excludeColumns [i]);
+		}
+		PlayerPrefsX.SetBool (flipDataKey, plotterRef.flipData);
+		PlayerPrefsX.SetBool (knownCategoriesKey, plotterRef.knownCategories);
+
+		SceneManager.LoadScene(0);
 	}
 
 	private void makeCatColInteractable() {
