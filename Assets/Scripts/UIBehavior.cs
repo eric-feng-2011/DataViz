@@ -29,7 +29,7 @@ public class UIBehavior : MonoBehaviour {
 	void Start () {
 		plotterRef = GameObject.FindGameObjectWithTag ("Plotter").GetComponent<DataPlotterPCA> ();
 		scaleSlider.value = (float) plotterRef.scale;
-		scaleText.text = "Scale: " + scaleSlider.value;
+		scaleText.text = "Scale: " + plotterRef.scale;
 		flipButton.GetComponentInChildren<Text> ().text = TFText [plotterRef.flipData];
 		catButton.GetComponentInChildren<Text> ().text = TFText [plotterRef.knownCategories];
 		makeCatColInteractable ();
