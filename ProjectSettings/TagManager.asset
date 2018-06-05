@@ -3,11 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - Fire
-  - Label
-  - Plotter
-  - TFText
+  tags: []
   layers:
   - Default
   - TransparentFX
