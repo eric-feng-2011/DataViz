@@ -30,5 +30,9 @@ public class VRInteraction : MonoBehaviour {
 		} else {
 			user.GetComponent<Rigidbody> ().velocity = Vector3.zero;
 		}
+
+		if (Controller.GetPressDown (SteamVR_Controller.ButtonMask.Grip)) {
+			
+		}
 	}
 }

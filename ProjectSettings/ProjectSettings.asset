@@ -723,7 +723,7 @@ PlayerSettings:
   facebookSdkVersion: 7.9.4
   apiCompatibilityLevel: 2
   cloudProjectId: c14dcaed-c926-4faf-b29b-a6d64618046a
-  projectName: 
+  projectName: BioSNTR_Plot_Points
   organizationId: fengeric11
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
