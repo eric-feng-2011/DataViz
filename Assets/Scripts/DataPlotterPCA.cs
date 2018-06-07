@@ -6,6 +6,8 @@ using Accord;
 using Accord.Math;
 using Accord.Statistics.Analysis;
 
+//TODO: Clean this file up
+
 //@source Big Data Social Science Fellows @ Penn State - Plot Points 
 //PCA Method: Take in N columns of data, calculate PCA, and project data onto first 3 principal components
 public class DataPlotterPCA : MonoBehaviour {
@@ -18,6 +20,7 @@ public class DataPlotterPCA : MonoBehaviour {
 	public GameObject labelHolder;
 	public GameObject graph;
 
+	public bool coorData = false;
 	public bool flipData = false;
 	public bool knownCategories = false;
 	public int categoryColumn;
@@ -56,19 +59,15 @@ public class DataPlotterPCA : MonoBehaviour {
 	string scaleKey = "scale";
 	string excludeColKey = "excludeColumn";
 
-	void Awake() {
-		checkPlayerPrefs ();
-	}
+//	void Awake() {
+//		PlayerPrefs.DeleteAll ();
+//		checkPlayerPrefs ();
+//	}
 	// Use this for initialization
 	void Start () {
 
 		colorMap = new Dictionary<String, Color>();
 		solidImages = new Dictionary<string, Texture2D> ();
-
-		doEverything ();
-	}
-
-	public void doEverything() {
 
 		graph.transform.localScale *= scale / 10.0f;
 
@@ -78,15 +77,28 @@ public class DataPlotterPCA : MonoBehaviour {
 		// Set pointlist to results of function Reader with argument inputfile
 		pointList = CSVReader.Read(inputfile);
 
-		//Log to console
-		//Debug.Log(pointList);
-
 		// Declare list of strings, fill with keys (column names)
 		columnList = new List<string>(pointList[1].Keys);
 		if (knownCategories) {
 			createColorMap ();
 			determineSolids ();
 		}
+
+		if (coorData) {
+
+			double[][] pointCoor = convertTo2D(pointList);
+			plotPoints (pointCoor);
+			AssignLabels ();
+
+		} else {
+			doEverything ();
+		}
+	}
+
+	public void doEverything() {
+
+		//Log to console
+		//Debug.Log(pointList);
 
 		//Calculate PCA and project data onto three most significant components before plotting
 		double[][] transformedPoints = calcPCAProject ();
@@ -122,18 +134,22 @@ public class DataPlotterPCA : MonoBehaviour {
 			// Make dataPoint child of PointHolder object 
 			dataPoint.transform.parent = PointHolder.transform;
 
+			string type = "Point";
+
+			if (knownCategories) {
+				type = Convert.ToString(pointList [i] [columnList[categoryColumn]]);
+				//Debug.Log ("Species of point " + i + ": " + species);
+				dataPoint.GetComponent<Renderer> ().material.color = colorMap [type];
+			}
+
 			// Assigns original values to dataPointName
-			string dataPointName = "(" + x + ", " + y + ", " + z + ")";
+			string dataPointName = type + ": (" + x + ", " + y + ", " + z + ")";
 
 			// Assigns name to the prefab
 			dataPoint.transform.name = dataPointName;
 
 			// Gets material color and sets it to a new RGBA color we define
-			if (knownCategories) {
-				string type = Convert.ToString(pointList [i] [columnList[categoryColumn]]);
-				//Debug.Log ("Species of point " + i + ": " + species);
-				dataPoint.GetComponent<Renderer> ().material.color = colorMap [type];
-			}
+
 		}
 	}
 
@@ -223,33 +239,7 @@ public class DataPlotterPCA : MonoBehaviour {
 	private double[][] calcPCAProject() {
 
 		//The inputMatrix to the PCA
-		double[][] inputMatrix = new double[pointList.Count][];
-
-		//The 'width' of the inputMatrix
-		int dataLength = pointList [1].Count;
-
-		//Iterates through the original data and converts the wanted data into the input matrix
-		for (int i = 0; i < inputMatrix.Length; i++)
-		{
-			if (knownCategories) {
-				inputMatrix [i] = new double[dataLength - excludeColumns.Count - 1];
-			} else {
-				inputMatrix [i] = new double[dataLength - excludeColumns.Count];
-			}
-
-			int index = 0;
-			List<object> data = new List<object>(pointList [i].Values);
-
-			for (int j = 0; j < dataLength; j++) {
-				if ((knownCategories && j == categoryColumn) || excludeColumns.Contains(j)) {
-					continue;
-				}
-				// Get data in pointList at ith "row"
-				inputMatrix[i][index] = Convert.ToDouble(data[j]);
-				//Debug.Log ("value at " + i + ", " + index + ": " + inputMatrix [i] [index]);
-				index++;
-			}
-		}
+		double[][] inputMatrix = convertTo2D(pointList);
 
 //		Somehow, this is throwing the data into an infinite loop. Or maybe my mac is not powerful enough to run the computations
 		if (flipData) {
@@ -362,5 +352,44 @@ public class DataPlotterPCA : MonoBehaviour {
 				excludeColumns.Add (PlayerPrefs.GetInt (excludeColKey + i.ToString ()));
 			}
 		}
+	}
+
+	private double[][] convertTo2D(List<Dictionary<string, object>> pointList) {
+		//The inputMatrix to the PCA
+		double[][] inputMatrix = new double[pointList.Count][];
+
+		//The 'width' of the inputMatrix
+		int dataLength = pointList [1].Count;
+		//Debug.Log ("DataLength: " + dataLength);
+
+		//Iterates through the original data and converts the wanted data into the input matrix
+		for (int i = 0; i < inputMatrix.Length; i++)
+		{
+			if (knownCategories) {
+				inputMatrix [i] = new double[dataLength - excludeColumns.Count - 1];
+			} else {
+				inputMatrix [i] = new double[dataLength - excludeColumns.Count];
+			}
+
+			int index = 0;
+			List<object> data = new List<object>(pointList [i].Values);
+
+			for (int j = 0; j < dataLength; j++) {
+				if ((knownCategories && j == categoryColumn) || excludeColumns.Contains(j)) {
+					continue;
+				}
+				// Get data in pointList at ith "row"
+				try {
+					inputMatrix[i][index] = Convert.ToDouble(data[j]);
+					//Debug.Log(excludeColumns.Contains(j) + " " + j + " " + data[j]);
+				} catch (Exception e) {
+					//Debug.Log ("Check row: " + i + ". Check col: " + j);
+				}
+				//Debug.Log ("value at " + i + ", " + index + ": " + inputMatrix [i] [index]);
+				index++;
+			}
+		}
+
+		return inputMatrix;
 	}
 }
