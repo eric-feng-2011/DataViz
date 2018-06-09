@@ -11,9 +11,8 @@ public class UIBehavior : MonoBehaviour {
 	public Text scaleText;
 	public Button flipButton;
 	public Button catButton;
+	public Button coorButton;
 	public InputField catKnownCol;
-
-	private DataPlotterPCA plotterRef;
 
 	private Dictionary<bool, string> TFText = new Dictionary<bool, string>()
 					{{false, "False"}, {true, "True"}};
@@ -24,38 +23,52 @@ public class UIBehavior : MonoBehaviour {
 	string inputFileKey = "inputFile";
 	string scaleKey = "scale";
 	string excludeColKey = "excludeColumn";
+	string coorDataKey = "coorData";
+
+	private bool flip;
+	private bool knowCat;
+	private bool coor;
+	private int catCol;
+	private string input;
+	private int scale = 10;
+	private List<int> excludeCols = new List<int> ();
 
 	// Use this for initialization
 	void Start () {
-		plotterRef = GameObject.FindGameObjectWithTag ("Plotter").GetComponent<DataPlotterPCA> ();
-		scaleSlider.value = (float) plotterRef.scale;
-		scaleText.text = "Scale: " + plotterRef.scale;
-		flipButton.GetComponentInChildren<Text> ().text = TFText [plotterRef.flipData];
-		catButton.GetComponentInChildren<Text> ().text = TFText [plotterRef.knownCategories];
+		scaleSlider.value = (float) scale;
+		scaleText.text = "Scale: " + scale;
+		flipButton.GetComponentInChildren<Text> ().text = TFText [flip];
+		catButton.GetComponentInChildren<Text> ().text = TFText [knowCat];
+		coorButton.GetComponentInChildren<Text> ().text = TFText [coor];
 		makeCatColInteractable ();
 	}
 
+	public void changeCoord() {
+		coor = !coor;
+		coorButton.GetComponentInChildren<Text> ().text = TFText [coor];
+	}
+
 	public void changeCatKnownTF() {
-		plotterRef.knownCategories = !plotterRef.knownCategories;
-		catButton.GetComponentInChildren<Text> ().text = TFText [plotterRef.knownCategories];
+		knowCat = !knowCat;
+		catButton.GetComponentInChildren<Text> ().text = TFText [knowCat];
 		makeCatColInteractable ();
 	}
 
 	public void changeCatKnown(string newInputColumn) {
-		plotterRef.categoryColumn = Convert.ToInt32(newInputColumn);
+		catCol = Convert.ToInt32(newInputColumn);
 	}
 
 	public void changeFlip() {
-		plotterRef.flipData = !plotterRef.flipData;
-		flipButton.GetComponentInChildren<Text> ().text = TFText [plotterRef.flipData];
+		flip = !flip;
+		flipButton.GetComponentInChildren<Text> ().text = TFText [flip];
 	}
 
 	public void changeInput(string newInputFile) {
-		plotterRef.inputfile = newInputFile;
+		input = newInputFile;
 	}
 
 	public void adjustScale(float sliderScale) {
-		plotterRef.scale = (int) sliderScale;
+		scale = (int) sliderScale;
 		scaleText.text = "Scale: " + scaleSlider.value;
 	}
 
@@ -63,14 +76,13 @@ public class UIBehavior : MonoBehaviour {
 	public void changeExclusion(string excluded) {
 		char[] delimiters = { ',', ' ' };
 
-		string[] excludeCols = excluded.Split (delimiters);
+		string[] excludeColStrings = excluded.Split (delimiters);
 
 		//Convert the string ints into actual ints and add to empty excludeColumns list
-		plotterRef.excludeColumns.Clear();
 		int number = 0;
-		foreach (string value in excludeCols) {
+		foreach (string value in excludeColStrings) {
 			if (Int32.TryParse (value, out number)) {
-				plotterRef.excludeColumns.Add (Convert.ToInt32 (value));
+				excludeCols.Add(Convert.ToInt32(value));
 			} else {
 				continue;
 			}
@@ -78,25 +90,23 @@ public class UIBehavior : MonoBehaviour {
 	}
 
 	public void reCalculatePCA() {
-//		plotterRef.graph.transform.localScale *= 10.0f / plotterRef.scale;
-//
-//		plotterRef.doEverything ();
 
 		//Keep track of the variables that the user inputs
-		PlayerPrefs.SetInt(categoryColumnKey, plotterRef.categoryColumn);
-		PlayerPrefs.SetString (inputFileKey, plotterRef.inputfile);
-		PlayerPrefs.SetInt (scaleKey, plotterRef.scale);
-		for (int i = 0; i < plotterRef.excludeColumns.Count; i++) {
-			PlayerPrefs.SetInt (excludeColKey + i.ToString(), plotterRef.excludeColumns [i]);
+		PlayerPrefs.SetInt(categoryColumnKey, catCol);
+		PlayerPrefs.SetString (inputFileKey, input);
+		PlayerPrefs.SetInt (scaleKey, scale);
+		for (int i = 0; i < excludeCols.Count; i++) {
+			PlayerPrefs.SetInt (excludeColKey + i.ToString(), excludeCols [i]);
 		}
-		PlayerPrefsX.SetBool (flipDataKey, plotterRef.flipData);
-		PlayerPrefsX.SetBool (knownCategoriesKey, plotterRef.knownCategories);
+		PlayerPrefsX.SetBool (flipDataKey, flip);
+		PlayerPrefsX.SetBool (knownCategoriesKey, knowCat);
+		PlayerPrefsX.SetBool (coorDataKey, coor);
 
-		SceneManager.LoadScene(0);
+		SceneManager.LoadScene(1);
 	}
 
 	private void makeCatColInteractable() {
-		if (!plotterRef.knownCategories) {
+		if (!knowCat) {
 			catKnownCol.interactable = false;
 		} else {
 			catKnownCol.interactable = true;

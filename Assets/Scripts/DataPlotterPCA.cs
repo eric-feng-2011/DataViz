@@ -58,61 +58,161 @@ public class DataPlotterPCA : MonoBehaviour {
 	string inputFileKey = "inputFile";
 	string scaleKey = "scale";
 	string excludeColKey = "excludeColumn";
+	string coorDataKey = "coorData";
 
-//	void Awake() {
-//		PlayerPrefs.DeleteAll ();
-//		checkPlayerPrefs ();
-//	}
-	// Use this for initialization
-	void Start () {
+	void Awake() {
+		checkPlayerPrefs ();
 
 		colorMap = new Dictionary<String, Color>();
 		solidImages = new Dictionary<string, Texture2D> ();
 
-		graph.transform.localScale *= scale / 10.0f;
+	}
 
-		colorMap.Clear ();
-		solidImages.Clear ();
+	// Use this for initialization
+	void Start () {
+
+		graph.transform.localScale *= scale / 10.0f;
 
 		// Set pointlist to results of function Reader with argument inputfile
 		pointList = CSVReader.Read(inputfile);
 
 		// Declare list of strings, fill with keys (column names)
 		columnList = new List<string>(pointList[1].Keys);
+
+		//Create a graph legend and color the points if know categories
 		if (knownCategories) {
-			createColorMap ();
-			determineSolids ();
+			ColorGraph.createColor (pointList, categoryColumn);
+			colorMap = ColorGraph.getColorMap ();
+			solidImages = ColorGraph.getSolidImages ();
 		}
 
+		//Plot according to input data given
 		if (coorData) {
 
 			double[][] pointCoor = convertTo2D(pointList);
-			plotPoints (pointCoor);
-			AssignLabels ();
+			plot (pointCoor);
 
 		} else {
-			doEverything ();
+			//Calculate PCA and project data onto three most significant components before plotting
+			double[][] transformedPoints = calcPCAProject ();
+			plot (transformedPoints);
 		}
 	}
 
-	public void doEverything() {
+	//Create graph legend
+	void OnGUI() {
 
-		//Log to console
-		//Debug.Log(pointList);
+		if (!knownCategories) {
+			return;
+		}
 
-		//Calculate PCA and project data onto three most significant components before plotting
-		double[][] transformedPoints = calcPCAProject ();
-		plotPoints (transformedPoints);
+		List<string> keys = new List<string>(solidImages.Keys);
+		//Debug.Log (numLegend);
+
+		// Make a background box of height '(numLegend + 1) * 20'
+		GUI.Box(new Rect(10, 10, 100, (keys.Count + 1) * 20), "Graph Legend");
+
+		for (int i = 1; i <= keys.Count; i++) {
+			GUI.Label (new Rect (15, 10 + i * 20, 60, 20), keys[i - 1]); 
+			GUI.DrawTexture (new Rect (80, 10 + i * 20, 15, 15), solidImages[keys[i - 1]]);
+		}
+	}
+
+	private void checkPlayerPrefs() {
+		if (PlayerPrefs.HasKey (flipDataKey)) {
+			flipData = PlayerPrefsX.GetBool (flipDataKey);
+		}
+		if (PlayerPrefs.HasKey (categoryColumnKey)) {
+			categoryColumn = PlayerPrefs.GetInt (categoryColumnKey);
+		}
+		if (PlayerPrefs.HasKey (knownCategoriesKey)) {
+			knownCategories = PlayerPrefsX.GetBool (knownCategoriesKey);
+		}
+		if (PlayerPrefs.HasKey (inputFileKey)) {
+			inputfile = PlayerPrefs.GetString (inputFileKey);
+		}
+		if (PlayerPrefs.HasKey (scaleKey)) {
+			scale = PlayerPrefs.GetInt (scaleKey);
+		}
+		if (PlayerPrefs.HasKey (coorDataKey)) {
+			coorData = PlayerPrefsX.GetBool (coorDataKey);
+		}
+		int excludeCount = excludeColumns.Count;
+		excludeColumns.Clear ();
+		for (int i = 0; i < excludeCount; i++) {
+			if (PlayerPrefs.HasKey (excludeColKey + i.ToString ())) {
+				excludeColumns.Add (PlayerPrefs.GetInt (excludeColKey + i.ToString ()));
+			}
+		}
+	}
+
+	private double[][] convertTo2D(List<Dictionary<string, object>> pointList) {
+		//The inputMatrix to the PCA
+		double[][] inputMatrix = new double[pointList.Count][];
+
+		//The 'width' of the inputMatrix
+		int dataLength = pointList [1].Count;
+		//Debug.Log ("DataLength: " + dataLength);
+
+		//Iterates through the original data and converts the wanted data into the input matrix
+		for (int i = 0; i < inputMatrix.Length; i++)
+		{
+			if (knownCategories) {
+				inputMatrix [i] = new double[dataLength - excludeColumns.Count - 1];
+			} else {
+				inputMatrix [i] = new double[dataLength - excludeColumns.Count];
+			}
+
+			int index = 0;
+			List<object> data = new List<object>(pointList [i].Values);
+
+			for (int j = 0; j < dataLength; j++) {
+				if ((knownCategories && j == categoryColumn) || excludeColumns.Contains(j)) {
+					continue;
+				}
+				// Get data in pointList at ith "row"
+				try {
+					inputMatrix[i][index] = Convert.ToDouble(data[j]);
+					//Debug.Log(excludeColumns.Contains(j) + " " + j + " " + data[j]);
+				} catch (Exception e) {
+					//Debug.Log ("Check row: " + i + ". Check col: " + j);
+				}
+				//Debug.Log ("value at " + i + ", " + index + ": " + inputMatrix [i] [index]);
+				index++;
+			}
+		}
+
+		return inputMatrix;
+	}
+
+	private double[][] calcPCAProject() {
+
+		//The inputMatrix to the PCA
+		double[][] inputMatrix = convertTo2D(pointList);
+
+		if (flipData) {
+			inputMatrix = inputMatrix.Transpose ();
+		}
+
+		PrincipalComponentAnalysis pca = new PrincipalComponentAnalysis(inputMatrix, AnalysisMethod.Center);
+
+		//Computes N number of Principal components, each of dimension 3 (xyz-plane)
+		//N is the number of data points/entrys
+		pca.Compute();
+
+		//Transforms the initial data by projecting it onto the found principle component axises
+		double[][] result = pca.Transform (inputMatrix, 3);
+
+		return result;
+	}
+
+	public void plot(double[][] coordinates) {
+
+		plotPoints (coordinates);
 		AssignLabels ();
 	}
 
 	private void plotPoints(double[][] pointXYZ) {
-
-//		Instantiate at point XYZ added onto mean XYZ in order to ensure all data is "above ground"
-//		float minX = Mathf.Abs(FindMinValue (pointXYZ.GetColumn (0)));
-//		float minY = Mathf.Abs(FindMinValue (pointXYZ.GetColumn (1)));
-//		float minZ = Mathf.Abs(FindMinValue (pointXYZ.GetColumn (2)));
-//		Vector3 minVector = new Vector3(minX, minY, minZ);
 
 		float maxX = Mathf.Abs (FindMaxValue (pointXYZ.GetColumn (0)));
 		newScale = scale / maxX;
@@ -150,41 +250,6 @@ public class DataPlotterPCA : MonoBehaviour {
 
 			// Gets material color and sets it to a new RGBA color we define
 
-		}
-	}
-
-	private void determineSolids() {
-		List<string> keys = new List<string>(colorMap.Keys);
-		for (int i = 0; i < keys.Count; i++) {
-			Texture2D solidImage = new Texture2D (20, 20);
-			string key = keys [i];
-			Color[] legendColor = new Color[400];
-			for (int j = 0; j < 400; j++) {
-				legendColor [j] = colorMap [key];
-			}
-			solidImage.SetPixels (legendColor);
-			solidImage.Apply ();
-
-			solidImages.Add (key, solidImage);
-		}
-	}
-
-	//Create graph legend
-	void OnGUI() {
-
-		if (!knownCategories) {
-			return;
-		}
-
-		List<string> keys = new List<string>(solidImages.Keys);
-		//Debug.Log (numLegend);
-
-		// Make a background box of height '(numLegend + 1) * 20'
-		GUI.Box(new Rect(10, 10, 100, (keys.Count + 1) * 20), "Graph Legend");
-
-		for (int i = 1; i <= keys.Count; i++) {
-			GUI.Label (new Rect (15, 10 + i * 20, 60, 20), keys[i - 1]); 
-			GUI.DrawTexture (new Rect (80, 10 + i * 20, 15, 15), solidImages[keys[i - 1]]);
 		}
 	}
 
@@ -236,37 +301,6 @@ public class DataPlotterPCA : MonoBehaviour {
 		}
 	}
 
-	private double[][] calcPCAProject() {
-
-		//The inputMatrix to the PCA
-		double[][] inputMatrix = convertTo2D(pointList);
-
-//		Somehow, this is throwing the data into an infinite loop. Or maybe my mac is not powerful enough to run the computations
-		if (flipData) {
-			inputMatrix = inputMatrix.Transpose ();
-		}
-
-		PrincipalComponentAnalysis pca = new PrincipalComponentAnalysis(inputMatrix, AnalysisMethod.Center);
-
-		//Computes N number of Principal components, each of dimension 3 (xyz-plane)
-		//N is the number of data points/entrys
-		pca.Compute();
-		double[][] result = pca.Transform (inputMatrix, 3);
-//		for (int i = 0; i < result.Length; i++) {
-//			for (int j = 0; j < result [0].Length; j++) {
-//				Debug.Log ("Value at " + i + ", " + j + ": " + result [i] [j]);
-//			}
-//		}
-
-		return result;
-	}
-
-	private void setColor(LineRenderer line, Color color) {
-		line.material = new Material (Shader.Find ("Particles/Additive"));
-		line.startColor = color;
-		line.endColor = color;
-	}
-
 	private float FindMaxValue(double[] array)
 	{
 		double max = double.MinValue;
@@ -281,115 +315,5 @@ public class DataPlotterPCA : MonoBehaviour {
 		return (float) max;
 	}
 
-	private float FindMinValue(double[] array)
-	{
-		double min = double.MaxValue;
 
-		//Loop through array, overwrite existing minValue if new value is smaller
-		for (var i = 0; i < array.Length; i++)
-		{
-			if (array[i] < min)
-				min = array[i];
-		}
-
-		return (float) min;
-	}
-		
-	//Create the colorMap that contains unique colors for each species
-	private void createColorMap() {
-
-		int numUniq = 0;
-		HashSet<string> trackSpecies = new HashSet<string> ();
-
-		for (int i = 0; i < pointList.Count; i++) {
-			string species = Convert.ToString (pointList [i] [columnList [categoryColumn]]);
-			//Debug.Log ("Species of point " + i + ": " + species);
-
-			if (!trackSpecies.Contains (species)) {
-				trackSpecies.Add (species);
-				numUniq += 1;
-			}
-		}
-
-		float step = 1f/numUniq;
-		//Debug.Log (numUniq);
-
-		foreach (string species in trackSpecies) {
-
-			float randR = UnityEngine.Random.Range (0, numUniq);
-			//Debug.Log ("RandR: " + randR);
-			float randG = UnityEngine.Random.Range (0, numUniq);
-			//Debug.Log ("RandG: " + randG);
-			float randB = UnityEngine.Random.Range (0, numUniq);
-			//Debug.Log ("RandB: " + randB);
-
-			colorMap.Add(species, new Color (UnityEngine.Random.Range (randR * step, (randR + 1) * step), 
-				UnityEngine.Random.Range (randG * step, (randG + 1) * step),
-				UnityEngine.Random.Range (randB * step, (randB + 1) * step)));
-		}			
-	}
-
-	private void checkPlayerPrefs() {
-		if (PlayerPrefs.HasKey (flipDataKey)) {
-			flipData = PlayerPrefsX.GetBool (flipDataKey);
-		}
-		if (PlayerPrefs.HasKey (categoryColumnKey)) {
-			categoryColumn = PlayerPrefs.GetInt (categoryColumnKey);
-		}
-		if (PlayerPrefs.HasKey (knownCategoriesKey)) {
-			knownCategories = PlayerPrefsX.GetBool (knownCategoriesKey);
-		}
-		if (PlayerPrefs.HasKey (inputFileKey)) {
-			inputfile = PlayerPrefs.GetString (inputFileKey);
-		}
-		if (PlayerPrefs.HasKey (scaleKey)) {
-			scale = PlayerPrefs.GetInt (scaleKey);
-		}
-		int excludeCount = excludeColumns.Count;
-		excludeColumns.Clear ();
-		for (int i = 0; i < excludeCount; i++) {
-			if (PlayerPrefs.HasKey (excludeColKey + i.ToString ())) {
-				excludeColumns.Add (PlayerPrefs.GetInt (excludeColKey + i.ToString ()));
-			}
-		}
-	}
-
-	private double[][] convertTo2D(List<Dictionary<string, object>> pointList) {
-		//The inputMatrix to the PCA
-		double[][] inputMatrix = new double[pointList.Count][];
-
-		//The 'width' of the inputMatrix
-		int dataLength = pointList [1].Count;
-		//Debug.Log ("DataLength: " + dataLength);
-
-		//Iterates through the original data and converts the wanted data into the input matrix
-		for (int i = 0; i < inputMatrix.Length; i++)
-		{
-			if (knownCategories) {
-				inputMatrix [i] = new double[dataLength - excludeColumns.Count - 1];
-			} else {
-				inputMatrix [i] = new double[dataLength - excludeColumns.Count];
-			}
-
-			int index = 0;
-			List<object> data = new List<object>(pointList [i].Values);
-
-			for (int j = 0; j < dataLength; j++) {
-				if ((knownCategories && j == categoryColumn) || excludeColumns.Contains(j)) {
-					continue;
-				}
-				// Get data in pointList at ith "row"
-				try {
-					inputMatrix[i][index] = Convert.ToDouble(data[j]);
-					//Debug.Log(excludeColumns.Contains(j) + " " + j + " " + data[j]);
-				} catch (Exception e) {
-					//Debug.Log ("Check row: " + i + ". Check col: " + j);
-				}
-				//Debug.Log ("value at " + i + ", " + index + ": " + inputMatrix [i] [index]);
-				index++;
-			}
-		}
-
-		return inputMatrix;
-	}
 }
