@@ -6,8 +6,6 @@ using Accord;
 using Accord.Math;
 using Accord.Statistics.Analysis;
 
-//TODO: Clean this file up
-
 //@source Big Data Social Science Fellows @ Penn State - Plot Points 
 //PCA Method: Take in N columns of data, calculate PCA, and project data onto first 3 principal components
 public class DataPlotterPCA : MonoBehaviour {
