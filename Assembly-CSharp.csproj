@@ -63,6 +63,7 @@
      <Compile Include="Assets\Scripts\CSVReader.cs" />
      <Compile Include="Assets\Scripts\DataPlotter.cs" />
      <Compile Include="Assets\Scripts\DataPlotterPCA.cs" />
+     <Compile Include="Assets\Scripts\HandleTextFile.cs" />
      <Compile Include="Assets\Scripts\OrientLabels.cs" />
      <Compile Include="Assets\Scripts\PauseMenuNameNotMatch.cs" />
      <Compile Include="Assets\Scripts\PlayerPrefsX.cs" />
@@ -175,6 +176,7 @@
      <None Include="Assets\SteamVR\Resources\SteamVR_ClearAll.shader" />
      <None Include="Assets\SteamVR\InteractionSystem\Hints\Shaders\ControllerButtonHints.shader" />
      <None Include="Assets\SteamVR\InteractionSystem\Teleport\Shaders\Highlight.shader" />
+     <None Include="Assets\Resources\test.txt" />
      <None Include="Assets\SteamVR\Resources\SteamVR_SphericalProjection.shader" />
      <None Include="Assets\SteamVR\Resources\SteamVR_AlphaOut.shader" />
      <None Include="Assets\SteamVR\readme.txt" />

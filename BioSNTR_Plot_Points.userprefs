@@ -1,12 +1,11 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/DataPlotterPCA.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Test.cs">
     <Files>
-      <File FileName="Assets/Scripts/DataPlotterPCA.cs" Line="267" Column="6" />
-      <File FileName="Assets/Scripts/CSVReader.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/UIBehavior.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/PlayerPrefsX.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/UIBehavior.cs" Line="6" Column="23" />
+      <File FileName="Assets/Scripts/DataPlotterPCA.cs" Line="112" Column="3" />
       <File FileName="Assets/Scripts/VRInteraction.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Test.cs" Line="27" Column="45" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
