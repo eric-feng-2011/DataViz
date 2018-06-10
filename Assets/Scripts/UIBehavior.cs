@@ -21,17 +21,21 @@ public class UIBehavior : MonoBehaviour {
 	string knownCategoriesKey = "knownCategories";
 	string categoryColumnKey = "categoryColumn";
 	string inputFileKey = "inputFile";
+	string directoryKey = "directoryKey";
 	string scaleKey = "scale";
 	string excludeColKey = "excludeColumn";
 	string coorDataKey = "coorData";
+	string numExcludedKey = "numExcludedKey";
 
 	private bool flip;
 	private bool knowCat;
 	private bool coor;
 	private int catCol;
 	private string input;
+	private string directory;
 	private int scale = 10;
-	private List<int> excludeCols = new List<int> ();
+	private List<int> excludeCols = new List<int>();
+	private int numExcluded;
 
 	// Use this for initialization
 	void Start () {
@@ -67,6 +71,10 @@ public class UIBehavior : MonoBehaviour {
 		input = newInputFile;
 	}
 
+	public void changeDirectory(string newDirectory) {
+		directory = newDirectory;
+	}
+
 	public void adjustScale(float sliderScale) {
 		scale = (int) sliderScale;
 		scaleText.text = "Scale: " + scaleSlider.value;
@@ -87,6 +95,7 @@ public class UIBehavior : MonoBehaviour {
 				continue;
 			}
 		}
+		numExcluded = excludeCols.Count;
 	}
 
 	public void reCalculatePCA() {
@@ -94,10 +103,12 @@ public class UIBehavior : MonoBehaviour {
 		//Keep track of the variables that the user inputs
 		PlayerPrefs.SetInt(categoryColumnKey, catCol);
 		PlayerPrefs.SetString (inputFileKey, input);
+		PlayerPrefs.SetString (directoryKey, directory);
 		PlayerPrefs.SetInt (scaleKey, scale);
 		for (int i = 0; i < excludeCols.Count; i++) {
 			PlayerPrefs.SetInt (excludeColKey + i.ToString(), excludeCols [i]);
 		}
+		PlayerPrefs.SetInt ("numExcludedKey", numExcluded);
 		PlayerPrefsX.SetBool (flipDataKey, flip);
 		PlayerPrefsX.SetBool (knownCategoriesKey, knowCat);
 		PlayerPrefsX.SetBool (coorDataKey, coor);

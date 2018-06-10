@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using System;
+using System.IO;
 using Accord;
 using Accord.Math;
 using Accord.Statistics.Analysis;
@@ -18,21 +20,26 @@ public class DataPlotterPCA : MonoBehaviour {
 	public GameObject labelHolder;
 	public GameObject graph;
 
-	public bool coorData = false;
-	public bool flipData = false;
-	public bool knownCategories = false;
-	public int categoryColumn;
+	private bool coorData = false;
+	private bool flipData = false;
+	private bool knownCategories = false;
+	private int categoryColumn;
 
 	//List for data columns to exclude
-	public List<int> excludeColumns;
+	private List<int> excludeColumns = new List<int>();
 
-	// Name of the input file, no extension
-	public string inputfile;
+	// Name of the input file, with extension
+	private string inputfile;
+
+	//Path to location of file
+	private string directory;
 
 	//Scale the graph
 	[Range(1, 100)]
-	public int scale = 10;
+	private int scale = 10;
 	private float newScale;
+
+	private int numExcluded;
 
 	// List for holding data from CSV reader
 	private List<Dictionary<string, object>> pointList;
@@ -46,17 +53,17 @@ public class DataPlotterPCA : MonoBehaviour {
 	//Private list to hold the keys of the dictionary in data
 	private List<string> columnList;
 
-	private Dictionary<string, bool> TFText = new Dictionary<string, bool>()
-	{{"False", false}, {"True", true}};
-
 	//PlayerPrefs keys
 	string flipDataKey = "flipData";
 	string knownCategoriesKey = "knownCategories";
 	string categoryColumnKey = "categoryColumn";
 	string inputFileKey = "inputFile";
+	string directoryKey = "directoryKey";
 	string scaleKey = "scale";
 	string excludeColKey = "excludeColumn";
 	string coorDataKey = "coorData";
+	string numExcludedKey = "numExcludedKey";
+
 
 	void Awake() {
 		checkPlayerPrefs ();
@@ -72,7 +79,8 @@ public class DataPlotterPCA : MonoBehaviour {
 		graph.transform.localScale *= scale / 10.0f;
 
 		// Set pointlist to results of function Reader with argument inputfile
-		pointList = CSVReader.Read(inputfile);
+		writeFile();
+		pointList = CSVReader.Read("input");
 
 		// Declare list of strings, fill with keys (column names)
 		columnList = new List<string>(pointList[1].Keys);
@@ -135,11 +143,43 @@ public class DataPlotterPCA : MonoBehaviour {
 		if (PlayerPrefs.HasKey (coorDataKey)) {
 			coorData = PlayerPrefsX.GetBool (coorDataKey);
 		}
-		int excludeCount = excludeColumns.Count;
+		if (PlayerPrefs.HasKey(directoryKey)) {
+			directory = PlayerPrefs.GetString(directoryKey);
+		}
+		if (PlayerPrefs.HasKey (numExcludedKey)) {
+			numExcluded = PlayerPrefs.GetInt (numExcludedKey);
+		}
+
 		excludeColumns.Clear ();
-		for (int i = 0; i < excludeCount; i++) {
+		for (int i = 0; i < numExcluded; i++) {
 			if (PlayerPrefs.HasKey (excludeColKey + i.ToString ())) {
 				excludeColumns.Add (PlayerPrefs.GetInt (excludeColKey + i.ToString ()));
+			}
+		}
+	}
+
+	void writeFile() {
+		Debug.Log (directory);
+		inputfile = directory + "/" + inputfile;
+		Debug.Log (inputfile);
+		foreach (string file in Directory.GetFiles(directory))
+		{
+			Debug.Log (file);
+			if (file == inputfile) {
+				string contents = File.ReadAllText (file);
+
+				string path = "Assets/Resources/input.csv";
+
+				//Write some text to the input.txt file
+				StreamWriter writer = new StreamWriter(path, false);
+				writer.WriteLine(contents);
+				writer.Close();
+
+				//Re-import the file to update the reference in the editor
+				AssetDatabase.ImportAsset(path); 
+				TextAsset asset = (TextAsset) Resources.Load("input");
+
+				Debug.Log (asset.text);
 			}
 		}
 	}
@@ -173,7 +213,7 @@ public class DataPlotterPCA : MonoBehaviour {
 					inputMatrix[i][index] = Convert.ToDouble(data[j]);
 					//Debug.Log(excludeColumns.Contains(j) + " " + j + " " + data[j]);
 				} catch (Exception e) {
-					//Debug.Log ("Check row: " + i + ". Check col: " + j);
+					Debug.Log ("Wrong Dimensions: " + e);
 				}
 				//Debug.Log ("value at " + i + ", " + index + ": " + inputMatrix [i] [index]);
 				index++;
