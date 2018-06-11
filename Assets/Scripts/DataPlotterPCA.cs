@@ -12,13 +12,14 @@ using Accord.Statistics.Analysis;
 //PCA Method: Take in N columns of data, calculate PCA, and project data onto first 3 principal components
 public class DataPlotterPCA : MonoBehaviour {
 
-	// The prefab for the data points that will be instantiated
+	// The various public variables used in the script
 	public GameObject PointHolder;
 	public GameObject PointPrefab;
 	public GameObject graphHolder;
 	public GameObject textLabel;
 	public GameObject labelHolder;
 	public GameObject graph;
+	public LayerMask dataPointMask;
 
 	private bool coorData = false;
 	private bool flipData = false;
@@ -159,9 +160,9 @@ public class DataPlotterPCA : MonoBehaviour {
 	}
 
 	void writeFile() {
-		Debug.Log (directory);
+		//Debug.Log (directory);
 		inputfile = directory + "/" + inputfile;
-		Debug.Log (inputfile);
+		//Debug.Log (inputfile);
 		foreach (string file in Directory.GetFiles(directory))
 		{
 			Debug.Log (file);
@@ -179,7 +180,7 @@ public class DataPlotterPCA : MonoBehaviour {
 				AssetDatabase.ImportAsset(path); 
 				TextAsset asset = (TextAsset) Resources.Load("input");
 
-				Debug.Log (asset.text);
+				//Debug.Log (asset.text);
 			}
 		}
 	}
@@ -274,6 +275,7 @@ public class DataPlotterPCA : MonoBehaviour {
 
 			string type = "Point";
 
+			// Gets material color and sets it to a new RGBA color we define
 			if (knownCategories) {
 				type = Convert.ToString(pointList [i] [columnList[categoryColumn]]);
 				//Debug.Log ("Species of point " + i + ": " + species);
@@ -286,8 +288,7 @@ public class DataPlotterPCA : MonoBehaviour {
 			// Assigns name to the prefab
 			dataPoint.transform.name = dataPointName;
 
-			// Gets material color and sets it to a new RGBA color we define
-
+			dataPoint.layer = dataPointMask;
 		}
 	}
 
