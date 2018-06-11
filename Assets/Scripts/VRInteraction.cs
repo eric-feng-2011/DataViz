@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //TODO: Add VR adaption - UI/Menu pop-up. Select points using laser. Fly in 3D (check motion sickness)
+//TODO: Revise Laser implementation so that one can click with it on menu and datapoints.
+//TODO: Consider changing moving mechanism in order to prevent motion sickness
 
 //@source https://www.raywenderlich.com/149239/htc-vive-tutorial-unity
 
@@ -13,7 +15,7 @@ using UnityEngine;
 */
 
 public class VRInteraction : MonoBehaviour {
-
+	
 	//Keep track of user that needs to move
 	public GameObject user;
 
@@ -74,15 +76,13 @@ public class VRInteraction : MonoBehaviour {
 		user.GetComponent<Rigidbody> ().velocity = moveAxis;
 
 		//Have the laser pointer point to a datapoint and print out datapoint name
+		ShowLaser ();
 		if (Controller.GetHairTriggerDown ()) {
-			ShowLaser ();
 			RaycastHit hit;
 			if (Physics.Raycast (trackedObj.transform.position, transform.forward, out hit, 100, dataPointMask)) {
 				hitPoint = hit.point;
 				ShowLaser (hit);
 			} 
-		} else {
-			laser.SetActive (false);
 		}
 
 		//Have the menu pause menu pop up when the application menu button is hit
@@ -102,7 +102,7 @@ public class VRInteraction : MonoBehaviour {
 		// Point the laser in the forward direction
 		laserTransform.LookAt(transform.forward); 
 		// Scale the laser appropriately. Currently set to an arbitrary number
-		laserTransform.localScale = 10;
+		laserTransform.localScale = Vector3.one * 10;
 	}
 
 	//Showing the laser when it hits a datapoint

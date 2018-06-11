@@ -19,7 +19,6 @@ public class DataPlotterPCA : MonoBehaviour {
 	public GameObject textLabel;
 	public GameObject labelHolder;
 	public GameObject graph;
-	public LayerMask dataPointMask;
 
 	private bool coorData = false;
 	private bool flipData = false;
@@ -41,6 +40,8 @@ public class DataPlotterPCA : MonoBehaviour {
 	private float newScale;
 
 	private int numExcluded;
+
+	private int dataPointMask = 8;
 
 	// List for holding data from CSV reader
 	private List<Dictionary<string, object>> pointList;
@@ -165,7 +166,7 @@ public class DataPlotterPCA : MonoBehaviour {
 		//Debug.Log (inputfile);
 		foreach (string file in Directory.GetFiles(directory))
 		{
-			Debug.Log (file);
+			//Debug.Log (file);
 			if (file == inputfile) {
 				string contents = File.ReadAllText (file);
 
