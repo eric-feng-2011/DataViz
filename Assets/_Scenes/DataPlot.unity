@@ -577,6 +577,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   user: {fileID: 302116317}
+  pauseMenu: {fileID: 156180428}
   laserPrefab: {fileID: 1371651495204042, guid: 4c21e34993a464c1eaa1455a80749ebe,
     type: 2}
   dataPointMask:
@@ -594,6 +595,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   user: {fileID: 302116317}
+  pauseMenu: {fileID: 156180428}
   laserPrefab: {fileID: 1371651495204042, guid: 4c21e34993a464c1eaa1455a80749ebe,
     type: 2}
   dataPointMask:
