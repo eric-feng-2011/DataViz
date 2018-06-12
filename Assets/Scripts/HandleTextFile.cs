@@ -2,6 +2,7 @@
 using UnityEditor;
 using System.IO;
 
+//@source https://support.unity3d.com/hc/en-us/articles/115000341143-How-do-I-read-and-write-data-from-a-text-file-
 public class HandleTextFile
 {
 	[MenuItem("Tools/Write file")]

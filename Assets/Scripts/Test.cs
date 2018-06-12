@@ -1,25 +1,64 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using Accord;
 using Accord.Math;
 using Accord.Statistics.Analysis;
 
-//TODO: Make it so that the user can import data from the Desktop and doesn't have to 
 public class Test : MonoBehaviour {
 
 	public string folderPath;
-	public string fileType;
+	public string inputfile;
+	public List<int> excludeColumns;
 
 	// Use this for initialization
 	void Start () {
-		readFile ();
+		writeFile ();
+		checkTranspose ();
 		Debug.Log ("Finished");
 	}
 
+	void writeFile() {
+		//Debug.Log (directory);
+		inputfile = folderPath + "/" + inputfile;
+		//Debug.Log (inputfile);
+		foreach (string file in Directory.GetFiles(folderPath))
+		{
+			//Debug.Log (file);
+			if (file == inputfile) {
+				string contents = File.ReadAllText (file);
+
+				string path = "Assets/Resources/test.csv";
+
+				//Write some text to the input.txt file
+				StreamWriter writer = new StreamWriter(path, false);
+				writer.WriteLine(contents);
+				writer.Close();
+
+				//Re-import the file to update the reference in the editor
+				AssetDatabase.ImportAsset(path); 
+				TextAsset asset = (TextAsset) Resources.Load("test");
+
+				//Debug.Log (asset.text);
+			}
+		}
+	}
+
+	void checkTranspose() {
+		List<Dictionary<string, object>> pointList = CSVReader.Read ("test");
+		List<Dictionary<string, object>> pointListTranspose = TransposeData.TransposeList (pointList);
+//		Debug.Log ("Number of rows" + pointList.Count);
+//		Debug.Log ("Number of columns" + pointList [0].Count);
+//		Debug.Log ("Number of rows in transpose: " + pointListTranspose.Count);
+//		Debug.Log ("Number of cols in transpose: " + pointListTranspose [0].Count);
+		//double[][] testInput = convertTo2D (pointList);
+	}
+
 	void readFile() {
-		foreach (string file in Directory.GetFiles(folderPath, "*." + fileType))
+		foreach (string file in Directory.GetFiles(folderPath))
 		{
 			string contents = File.ReadAllText(file);
 			Debug.Log ("A File Name: " + file);
