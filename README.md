@@ -4,6 +4,8 @@ This project is for the SDSU REU BioSNTR 2018 Summer Research Program
 
 The goal of this program is to create a tool for visualizing 3-Dimensional Principle Component Analysis (PCA) in virtual reality. Ideally, such a tool would be useful in gaining more understanding for various data. The primary interface used will be HTC Vive.
 
+## Table of Contents
+
 ## Project Status
 
 This project is still in development. More specifically, the VR components have not been tested as no there is no appropriate hardware in my general vicinity. This should be resolved by 7/1/2018.
@@ -73,10 +75,10 @@ Image Here
 
 ## Example Usage
 
-These examples will demonstrate what to input into the various inputfields and what the end result should look like. 
+These examples will demonstrate what to input into the various inputfields and what the end result should look like. All example data files mentioned are located on my computer in the absolute directory path /Users/ericfeng/Desktop/BioSNTR. 
 
 ### Example 1
-In this example we will plotting data regarding irises from a datafile named [iris.csv](Assets/Resources/iris.csv) that is located in the absolute directory path /Users/ericfeng/Desktop/BioSNTR on my computer. 
+In this example we will plotting data regarding irises from a datafile named [iris.csv](Assets/Resources/iris.csv).
 
 <img width="767" alt="example path 1" src="https://user-images.githubusercontent.com/31462296/41296942-ac7d670c-6e23-11e8-9d15-e82a1c6b5345.png">
 
@@ -94,13 +96,55 @@ On the second page of the main menu (numbered according to instructions above):
 
 7. 0. I don't want to include the first column that simply numbers the rows of data.
 8. True. I have a column that categorizes my various points.
-9. 5. The column that contains the category names is column 5. 
+9. 5. The column that contains the category names is column 5. Notice that I didn't double input the category column into the exclude columns list.
 
-<img width="474" alt="example 1 menu 2" src="https://user-images.githubusercontent.com/31462296/41297589-1692f002-6e25-11e8-8037-ccb9674f3446.png">
+<img width="472" alt="example 1 menu 2" src="https://user-images.githubusercontent.com/31462296/41297926-daf103a8-6e25-11e8-9d40-26629ac26e94.png">
 
 After inputting the values, I hit the calculate PCA button, and the application calculates and projects the data onto the first 3 principle components. Like so:
 
 <img width="678" alt="example 1 plot" src="https://user-images.githubusercontent.com/31462296/41297618-241cb41a-6e25-11e8-9101-403de714ae07.png">
+
+### Example 2
+In this example we will be plotting coordinate data regarding mouse embryo development from [coord_data.csv](Assets/Resources/coord_data.csv). The original data file was too large, and I used numpy to calculate these points. Credits for data go to (place author here).
+
+1. Scale - 30 
+2. Directory - /Users/ericfeng/Desktop/BioSNTR
+3. File Name - coord_data.csv
+4. False 
+5. True. coord_data.csv does contain coordinate data
+
+<img width="474" alt="example 2 menu 1" src="https://user-images.githubusercontent.com/31462296/41298486-13438630-6e27-11e8-9e5f-da0fbdb79086.png">
+
+7. 0. I don't want to include the first column that simply numbers the rows of data.
+8. True 
+9. 4 
+
+<img width="476" alt="example 2 menu 2" src="https://user-images.githubusercontent.com/31462296/41298504-20b29450-6e27-11e8-97bf-3bac7c1d820f.png">
+
+Final plot: 
+
+<img width="665" alt="example 2 plot" src="https://user-images.githubusercontent.com/31462296/41298531-2d2ca0fe-6e27-11e8-8050-22c31b3aca5d.png">
+
+### Example 3
+In this example we will be plotting the transpose of the data in [Processed_Data.csv](Assets/Resources/Processed_Data.csv). Credits for data go to (place author here).
+
+1. Scale - 5 
+2. Directory - /Users/ericfeng/Desktop/BioSNTR
+3. File Name - Processed_Data.csv
+4. True 
+5. False 
+
+<img width="475" alt="example 3 menu 1" src="https://user-images.githubusercontent.com/31462296/41299681-9df954a6-6e29-11e8-9129-e8ac7cbb42c9.png">
+
+7. 0, 1
+8. False 
+9. N/A
+
+<img width="475" alt="example 3 menu 2" src="https://user-images.githubusercontent.com/31462296/41299703-a5c41bf8-6e29-11e8-98aa-7fddedb8aa64.png">
+
+Final plot:
+
+Image Here
 
 ## External References
 The following are all third-parties that I have used code implementations from or referenced in the development of this application:
