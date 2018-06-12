@@ -61,7 +61,6 @@
      <Compile Include="Assets\SampleScenes\Scripts\SlowMoButton.cs" />
      <Compile Include="Assets\Scripts\ColorGraph.cs" />
      <Compile Include="Assets\Scripts\CSVReader.cs" />
-     <Compile Include="Assets\Scripts\DataPlotter.cs" />
      <Compile Include="Assets\Scripts\DataPlotterPCA.cs" />
      <Compile Include="Assets\Scripts\HandleTextFile.cs" />
      <Compile Include="Assets\Scripts\OrientLabels.cs" />

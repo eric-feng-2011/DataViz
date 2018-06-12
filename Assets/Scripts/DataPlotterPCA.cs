@@ -20,6 +20,7 @@ public class DataPlotterPCA : MonoBehaviour {
 	public GameObject labelHolder;
 	public GameObject graph;
 
+	//Variables to keep track of the settings and inputs that the user had previously input in the main menu
 	private bool coorData = false;
 	private bool flipData = false;
 	private bool knownCategories = false;
@@ -39,8 +40,10 @@ public class DataPlotterPCA : MonoBehaviour {
 	private int scale = 10;
 	private float newScale;
 
+	//The number of excluded columns. (excludeColumns.Count)
 	private int numExcluded;
 
+	//The mask that will be assigned to datapoints. Needed so that users can select data points in VR
 	private int dataPointMask = 8;
 
 	// List for holding data from CSV reader
@@ -49,7 +52,7 @@ public class DataPlotterPCA : MonoBehaviour {
 	//Dictionary to hold mappings from species to color
 	private Dictionary<string, Color> colorMap;
 
-	//Dictionary to hold the solid color images derived from the colorMap
+	//Dictionary to hold the solid color images derived from the colorMap. Used for the graph legend
 	private Dictionary<string, Texture2D> solidImages;
 
 	//Private list to hold the keys of the dictionary in data
@@ -66,8 +69,8 @@ public class DataPlotterPCA : MonoBehaviour {
 	string coorDataKey = "coorData";
 	string numExcludedKey = "numExcludedKey";
 
-
 	void Awake() {
+		//Check the playerprefs and reset various private variables above to match user input
 		checkPlayerPrefs ();
 
 		colorMap = new Dictionary<String, Color>();
@@ -78,12 +81,14 @@ public class DataPlotterPCA : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+		//Scale the graph
 		graph.transform.localScale *= scale / 10.0f;
 
 		// Set pointlist to results of function Reader with argument inputfile
 		writeFile();
 		pointList = CSVReader.Read("input");
 
+		//If the user wants the data flipped, here is where it is done
 		if (flipData) {
 			pointList = TransposeData.TransposeList (pointList);
 		}
@@ -101,6 +106,8 @@ public class DataPlotterPCA : MonoBehaviour {
 		//Plot according to input data given
 		if (coorData) {
 
+			//Coordinate data does not have PCA run on it. 
+			//Converting the file into an appropriate format for plotting is enough
 			double[][] pointCoor = convertTo2D(pointList);
 			plot (pointCoor);
 
@@ -114,22 +121,24 @@ public class DataPlotterPCA : MonoBehaviour {
 	//Create graph legend
 	void OnGUI() {
 
+		// If there are no known categories, we can not create a graph legend
 		if (!knownCategories) {
 			return;
 		}
 
 		List<string> keys = new List<string>(solidImages.Keys);
-		//Debug.Log (numLegend);
 
 		// Make a background box of height '(numLegend + 1) * 20'
 		GUI.Box(new Rect(10, 10, 100, (keys.Count + 1) * 20), "Graph Legend");
 
+		//Fill the GUI Box with an appropriate legend
 		for (int i = 1; i <= keys.Count; i++) {
 			GUI.Label (new Rect (15, 10 + i * 20, 60, 20), keys[i - 1]); 
 			GUI.DrawTexture (new Rect (80, 10 + i * 20, 15, 15), solidImages[keys[i - 1]]);
 		}
 	}
 
+	//Check all the playerprefs and reset various private variables above to match user input
 	private void checkPlayerPrefs() {
 		if (PlayerPrefs.HasKey (flipDataKey)) {
 			flipData = PlayerPrefsX.GetBool (flipDataKey);
@@ -164,13 +173,11 @@ public class DataPlotterPCA : MonoBehaviour {
 		}
 	}
 
+	//Read in a file from outside Unity and load it into a file named 'input.csv'
 	void writeFile() {
-		//Debug.Log (directory);
 		inputfile = directory + "/" + inputfile;
-		//Debug.Log (inputfile);
 		foreach (string file in Directory.GetFiles(directory))
 		{
-			//Debug.Log (file);
 			if (file == inputfile) {
 				string contents = File.ReadAllText (file);
 
@@ -184,12 +191,12 @@ public class DataPlotterPCA : MonoBehaviour {
 				//Re-import the file to update the reference in the editor
 				AssetDatabase.ImportAsset(path); 
 				TextAsset asset = (TextAsset) Resources.Load("input");
-
-				//Debug.Log (asset.text);
 			}
 		}
 	}
 
+	//Take a List of Dictionaries and convert it into a 2D array.
+	//This method converts the pointList into a format that is easier to run PCA on and/or plot
 	private double[][] convertTo2D(List<Dictionary<string, object>> pointList) {
 		//The inputMatrix to the PCA
 		double[][] inputMatrix = new double[pointList.Count][];
@@ -200,6 +207,7 @@ public class DataPlotterPCA : MonoBehaviour {
 		//Iterates through the original data and converts the wanted data into the input matrix
 		for (int i = 0; i < inputMatrix.Length; i++)
 		{
+			//Determine the size of a nested array
 			if (knownCategories) {
 				inputMatrix [i] = new double[dataLength - excludeColumns.Count - 1];
 			} else {
@@ -213,14 +221,10 @@ public class DataPlotterPCA : MonoBehaviour {
 				if ((knownCategories && j == categoryColumn) || excludeColumns.Contains(j)) {
 					continue;
 				}
-				// Get data in pointList at ith "row"
-				try {
-					inputMatrix[i][index] = Convert.ToDouble(data[j]);
-					//Debug.Log(excludeColumns.Contains(j) + " " + j + " " + data[j]);
-				} catch (Exception e) {
-					Debug.Log ("Wrong Dimensions or not double value: " + e);
-				}
-				//Debug.Log ("value at " + i + ", " + index + ": " + inputMatrix [i] [index]);
+				// Get data in pointList in ith "row", jth "column"
+				// Import the aforementioned value into the appropriate 2D array location
+				inputMatrix[i][index] = Convert.ToDouble(data[j]);
+	
 				index++;
 			}
 		}
@@ -239,10 +243,11 @@ public class DataPlotterPCA : MonoBehaviour {
 		//N is the number of data points/entrys
 		pca.Compute();
 
-		//Transforms the initial data by projecting it into the third dimension
+		//Transforms the initial data by projecting it into three dimensions
 		//using the found principle component axises
 		double[][] result = pca.Transform (inputMatrix, 3);
 
+		//Return the transformed data. Contains the coordinates of the data points after projection
 		return result;
 	}
 
@@ -286,9 +291,10 @@ public class DataPlotterPCA : MonoBehaviour {
 			// Assigns original values to dataPointName
 			string dataPointName = type + ": (" + x + ", " + y + ", " + z + ")";
 
-			// Assigns name to the prefab
+			// Assigns name to the individual data point
 			dataPoint.transform.name = dataPointName;
 
+			// Gives the data point the appropriate layerMask so that users can interact with it in VR
 			dataPoint.layer = dataPointMask;
 		}
 	}
@@ -326,6 +332,8 @@ public class DataPlotterPCA : MonoBehaviour {
 	}
 
 	private void numberAxis() {
+		// Every two units, place an appropriate number for the axis
+		// The numbers go from negative maxX to positive maxX
 		for (int i = -scale; i <= scale; i += 2) {
 			GameObject xNum = Instantiate (textLabel, new Vector3 (i, 0, 0), Quaternion.identity);
 			xNum.GetComponent<TextMesh> ().text = (i/newScale).ToString ("0.0");
@@ -341,6 +349,7 @@ public class DataPlotterPCA : MonoBehaviour {
 		}
 	}
 
+	// Method to find the largest value in an array
 	private float FindMaxValue(double[] array)
 	{
 		double max = double.MinValue;
@@ -354,6 +363,4 @@ public class DataPlotterPCA : MonoBehaviour {
 
 		return (float) max;
 	}
-
-
 }

@@ -5,6 +5,8 @@ using System.IO;
 //@source https://support.unity3d.com/hc/en-us/articles/115000341143-How-do-I-read-and-write-data-from-a-text-file-
 public class HandleTextFile
 {
+	//This creates a menu in the Unity Editor for creating a unity resource and reading from it.
+	//Was helpful in figuring out how to read input from outside Unity resources
 	[MenuItem("Tools/Write file")]
 	static void WriteString()
 	{
