@@ -6,9 +6,18 @@ The goal of this program is to create a tool for visualizing 3-Dimensional Princ
 
 ## Table of Contents
 
+[Project Status](https://github.com/thunder2011/BioSNTR_Plot_Points#project-status)
+[Code Style / Framework Used](https://github.com/thunder2011/BioSNTR_Plot_Points#code-style--framework-used)
+[Intstructions on How to Use](https://github.com/thunder2011/BioSNTR_Plot_Points#how-to-use)
+[Examples](https://github.com/thunder2011/BioSNTR_Plot_Points#example-usage)
+[External References] (https://github.com/thunder2011/BioSNTR_Plot_Points#external-references)
+[Acknowledgements](https://github.com/thunder2011/BioSNTR_Plot_Points#acknowledgements)
+
 ## Project Status
 
 This project is still in development. More specifically, the VR components have not been tested as no there is no appropriate hardware in my general vicinity. This should be resolved by 7/1/2018.
+
+[Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
 
 ## Code Style / Framework Used
 
@@ -28,6 +37,8 @@ The PCA implementations are from Accord Version 3.0.2; the reason why I chose to
     double[][] result = pca.Transform (inputMatrix, 3);
     
     return result;
+
+[Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
 
 ## How to Use
 
@@ -73,14 +84,16 @@ Image Here
 
 3. Selecting points to view - If the laser points to a data point, then the user can then hit the hair trigger to have the name of the data point show up in a GUI.
 
+[Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
+
 ## Example Usage
 
 These examples will demonstrate what to input into the various inputfields and what the end result should look like. All example data files mentioned are located on my computer in the absolute directory path /Users/ericfeng/Desktop/BioSNTR. 
 
+<img width="767" alt="example path 1" src="https://user-images.githubusercontent.com/31462296/41296942-ac7d670c-6e23-11e8-9d15-e82a1c6b5345.png">
+
 ### Example 1
 In this example we will plotting data regarding irises from a datafile named [iris.csv](Assets/Resources/iris.csv).
-
-<img width="767" alt="example path 1" src="https://user-images.githubusercontent.com/31462296/41296942-ac7d670c-6e23-11e8-9d15-e82a1c6b5345.png">
 
 I fill out the various inputs of the main menu accordingly: 
 
@@ -136,15 +149,17 @@ In this example we will be plotting the transpose of the data in [Processed_Data
 
 <img width="475" alt="example 3 menu 1" src="https://user-images.githubusercontent.com/31462296/41299681-9df954a6-6e29-11e8-9129-e8ac7cbb42c9.png">
 
-7. 0, 1
+7. 0
 8. False 
 9. N/A
 
-<img width="475" alt="example 3 menu 2" src="https://user-images.githubusercontent.com/31462296/41299703-a5c41bf8-6e29-11e8-98aa-7fddedb8aa64.png">
+<img width="479" alt="example 3 menu 2" src="https://user-images.githubusercontent.com/31462296/41310712-e9763688-6e47-11e8-82a0-1ccc5b1af7bc.png">
 
 Final plot:
 
-Image Here
+<img width="661" alt="example 3 plot" src="https://user-images.githubusercontent.com/31462296/41310726-f3ee6c98-6e47-11e8-966b-26db245f0679.png">
+
+[Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
 
 ## External References
 The following are all third-parties that I have used code implementations from or referenced in the development of this application:
@@ -155,8 +170,12 @@ The following are all third-parties that I have used code implementations from o
 5. Accord Framework for PCA
 6. Unity and Microsoft Scripting Documentation
 
+[Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
+
 ### Acknowledgements
 Special recognition to the following: 
 1. Professor Xijin Ge from SDSU who acted as my advisor for the duration of the project
 2. BioSNTR for funding the development of this application
 3. UC Berkeley and Virtual Reality @ Berkeley for the use of their equipment in the development and testing of the VR components of the application
+
+[Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
