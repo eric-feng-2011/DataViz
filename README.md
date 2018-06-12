@@ -7,10 +7,15 @@ The goal of this program is to create a tool for visualizing 3-Dimensional Princ
 ## Table of Contents
 
 [Project Status](https://github.com/thunder2011/BioSNTR_Plot_Points#project-status)
+
 [Code Style / Framework Used](https://github.com/thunder2011/BioSNTR_Plot_Points#code-style--framework-used)
+
 [Intstructions on How to Use](https://github.com/thunder2011/BioSNTR_Plot_Points#how-to-use)
+
 [Examples](https://github.com/thunder2011/BioSNTR_Plot_Points#example-usage)
-[External References] (https://github.com/thunder2011/BioSNTR_Plot_Points#external-references)
+
+[External References](https://github.com/thunder2011/BioSNTR_Plot_Points#external-references)
+
 [Acknowledgements](https://github.com/thunder2011/BioSNTR_Plot_Points#acknowledgements)
 
 ## Project Status
