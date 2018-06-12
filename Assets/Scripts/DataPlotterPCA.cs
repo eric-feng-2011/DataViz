@@ -84,6 +84,10 @@ public class DataPlotterPCA : MonoBehaviour {
 		writeFile();
 		pointList = CSVReader.Read("input");
 
+		if (flipData) {
+			pointList = TransposeData.TransposeList (pointList);
+		}
+
 		// Declare list of strings, fill with keys (column names)
 		columnList = new List<string>(pointList[1].Keys);
 
@@ -192,7 +196,6 @@ public class DataPlotterPCA : MonoBehaviour {
 
 		//The 'width' of the inputMatrix
 		int dataLength = pointList [1].Count;
-		//Debug.Log ("DataLength: " + dataLength);
 
 		//Iterates through the original data and converts the wanted data into the input matrix
 		for (int i = 0; i < inputMatrix.Length; i++)
@@ -215,7 +218,7 @@ public class DataPlotterPCA : MonoBehaviour {
 					inputMatrix[i][index] = Convert.ToDouble(data[j]);
 					//Debug.Log(excludeColumns.Contains(j) + " " + j + " " + data[j]);
 				} catch (Exception e) {
-					Debug.Log ("Wrong Dimensions: " + e);
+					Debug.Log ("Wrong Dimensions or not double value: " + e);
 				}
 				//Debug.Log ("value at " + i + ", " + index + ": " + inputMatrix [i] [index]);
 				index++;
@@ -230,17 +233,14 @@ public class DataPlotterPCA : MonoBehaviour {
 		//The inputMatrix to the PCA
 		double[][] inputMatrix = convertTo2D(pointList);
 
-		if (flipData) {
-			inputMatrix = inputMatrix.Transpose ();
-		}
-
 		PrincipalComponentAnalysis pca = new PrincipalComponentAnalysis(inputMatrix, AnalysisMethod.Center);
 
-		//Computes N number of Principal components, each of dimension 3 (xyz-plane)
+		//Computes N number of Principal components
 		//N is the number of data points/entrys
 		pca.Compute();
 
-		//Transforms the initial data by projecting it onto the found principle component axises
+		//Transforms the initial data by projecting it into the third dimension
+		//using the found principle component axises
 		double[][] result = pca.Transform (inputMatrix, 3);
 
 		return result;
@@ -304,8 +304,8 @@ public class DataPlotterPCA : MonoBehaviour {
 
 		// Update point counter
 		GameObject point_Count = Instantiate(textLabel, new Vector3(12, 8, 0), Quaternion.identity);
-		point_Count.GetComponent<TextMesh>().text = "Number of Points: " 
-			+ pointList.Count.ToString("0");
+		point_Count.GetComponent<TextMesh> ().text = "Number of Points: "
+				+ pointList.Count.ToString ("0");
 		point_Count.transform.parent = labelHolder.transform;
 
 		//Update axis titles to Principle Components
@@ -326,7 +326,7 @@ public class DataPlotterPCA : MonoBehaviour {
 	}
 
 	private void numberAxis() {
-		for (int i = -scale; i <= scale; i += scale / 5) {
+		for (int i = -scale; i <= scale; i += 2) {
 			GameObject xNum = Instantiate (textLabel, new Vector3 (i, 0, 0), Quaternion.identity);
 			xNum.GetComponent<TextMesh> ().text = (i/newScale).ToString ("0.0");
 			xNum.transform.parent = graphHolder.transform;

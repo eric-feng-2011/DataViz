@@ -68,6 +68,7 @@
      <Compile Include="Assets\Scripts\PauseMenuNameNotMatch.cs" />
      <Compile Include="Assets\Scripts\PlayerPrefsX.cs" />
      <Compile Include="Assets\Scripts\Test.cs" />
+     <Compile Include="Assets\Scripts\TransposeData.cs" />
      <Compile Include="Assets\Scripts\UIBehavior.cs" />
      <Compile Include="Assets\Scripts\VRInteraction.cs" />
      <Compile Include="Assets\SteamVR\Extras\SteamVR_GazeTracker.cs" />

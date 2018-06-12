@@ -205,8 +205,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fffbad5bb3980477ea33d351fbd9fc91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  folderPath: /Users/ericfeng/Desktop
-  fileType: txt
+  folderPath: /Users/ericfeng/Desktop/BioSNTR
+  inputfile: Test.csv
+  excludeColumns: 
 --- !u!4 &1071323939
 Transform:
   m_ObjectHideFlags: 0
