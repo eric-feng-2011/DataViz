@@ -8,10 +8,16 @@ using Accord;
 using Accord.Math;
 using Accord.Statistics.Analysis;
 
+//This file was used for testing and debugging.
+//It has no implications on the actual PCA computation and graphical rendering of the data
 public class Test : MonoBehaviour {
 
+	//The absolute path in the directory to where the data file is
 	public string folderPath;
+	//The name of the datafile
 	public string inputfile;
+
+	//The list that keeps track of columns to exclude from PCA and graphical rendering
 	public List<int> excludeColumns;
 
 	// Use this for initialization
@@ -21,16 +27,17 @@ public class Test : MonoBehaviour {
 		Debug.Log ("Finished");
 	}
 
+	//Go the directory that is given and find the relevant file before importing it as a Unity asset
 	void writeFile() {
-		//Debug.Log (directory);
+		//Create the absolute name of the relevant file
 		inputfile = folderPath + "/" + inputfile;
-		//Debug.Log (inputfile);
-		foreach (string file in Directory.GetFiles(folderPath))
+		foreach (string file in Directory.GetFiles(folderPath)) //Search in the directory
 		{
-			//Debug.Log (file);
+			// If find relevant file, extract text, write it into a Unity Resource, and load the resource
 			if (file == inputfile) {
 				string contents = File.ReadAllText (file);
 
+				//Create the file and the relative path to it from Unity root
 				string path = "Assets/Resources/test.csv";
 
 				//Write some text to the input.txt file
@@ -41,22 +48,17 @@ public class Test : MonoBehaviour {
 				//Re-import the file to update the reference in the editor
 				AssetDatabase.ImportAsset(path); 
 				TextAsset asset = (TextAsset) Resources.Load("test");
-
-				//Debug.Log (asset.text);
 			}
 		}
 	}
 
+	//Ensure that what TransposeData.TransposeList creates is the transpose of the original data
 	void checkTranspose() {
 		List<Dictionary<string, object>> pointList = CSVReader.Read ("test");
 		List<Dictionary<string, object>> pointListTranspose = TransposeData.TransposeList (pointList);
-//		Debug.Log ("Number of rows" + pointList.Count);
-//		Debug.Log ("Number of columns" + pointList [0].Count);
-//		Debug.Log ("Number of rows in transpose: " + pointListTranspose.Count);
-//		Debug.Log ("Number of cols in transpose: " + pointListTranspose [0].Count);
-		//double[][] testInput = convertTo2D (pointList);
 	}
 
+	//Read a file in the given directory and reveal file name and contents
 	void readFile() {
 		foreach (string file in Directory.GetFiles(folderPath))
 		{
@@ -67,6 +69,7 @@ public class Test : MonoBehaviour {
 		}
 	}
 
+	//Ensure that Accord PCA works
 	void pcaCheck() {
 		double[][] input =
 		{              // age, smokes?, had cancer?
@@ -82,6 +85,7 @@ public class Test : MonoBehaviour {
 			//		    new double[] { 10,    20  }, // true
 		};
 
+		//Create PCA object
 		PrincipalComponentAnalysis pca = new PrincipalComponentAnalysis(input);
 
 		//Computes N number of Principal components, each of dimension 2 (xy-plane)
@@ -89,12 +93,13 @@ public class Test : MonoBehaviour {
 		pca.Compute();
 		double[,] components = pca.ComponentMatrix; //Obtains the principal components of data
 		double[] eigValues = pca.Eigenvalues;	//Obtains the eigenvalues of the data
-		//double[][] components = pca.Transform(input, 2);
 
+		//Ensure the number of principal components is correct
 		Debug.Log("Number of principal components: " + components.GetLength(0));
 
 		//Principal Components (eigenvectors) are in matrix vertically
 		//In other words, numbers that share same column number are part of same vector
+		//Print out pca and eigenvalues (singularity values) for extra confirmation
 		for(int x = 0; x < components.GetLength(0); x++) {
 			for(int y = 0; y < components.GetLength(1); y++) {
 				Debug.Log("col: " + y + ", row: " + x + ": " + components[x, y]);
@@ -103,6 +108,5 @@ public class Test : MonoBehaviour {
 		for(int x = 0; x < eigValues.Length; x++) {
 			Debug.Log("EigenValue " + x + ": " + eigValues[x]);
 		}
-		Debug.Log("Finished");
 	}
 }
