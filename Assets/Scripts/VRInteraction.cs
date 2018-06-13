@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 //TODO: Add VR adaption - UI/Menu pop-up. Select points using laser. Fly in 3D (check motion sickness)
 //TODO: Revise Laser implementation so that one can click with it on menu and datapoints.
@@ -22,6 +23,9 @@ public class VRInteraction : MonoBehaviour {
 	//PauseMenu
 	public GameObject pauseMenu;
 
+	//Text to show datapoint selected
+	public GameObject pointText;
+
 	//Keep track of laser prefab
 	public GameObject laserPrefab;
 	// Instantiated laser gameobject and information
@@ -30,14 +34,15 @@ public class VRInteraction : MonoBehaviour {
 	// Where the laser should hit
 	private Vector3 hitPoint; 
 
-	//Mask to make sure that the raycast hits only dataPoints
+	//Mask to make sure that the raycast hits only dataPoints and UI components
 	public LayerMask dataPointMask;
+	public LayerMask UIMask;
 
-	private SteamVR_TrackedObject trackedObj;
+	private SteamVR_TrackedController trackedObj;
 	// Keeps track of controllers. Also which controller (L/R)
 	private SteamVR_Controller.Device Controller
 	{
-		get { return SteamVR_Controller.Input((int)trackedObj.index); }
+		get { return SteamVR_Controller.Input((int)trackedObj.controllerIndex); }
 	}
 
 	//Variables to keep track of input on touchpad and how that translates to 
@@ -47,7 +52,7 @@ public class VRInteraction : MonoBehaviour {
 
 	//Track the tracked object
 	void Awake() {
-		trackedObj = GetComponent<SteamVR_TrackedObject>();
+		trackedObj = GetComponent<SteamVR_TrackedController>();
 	}
 
 	void Start() {
@@ -68,7 +73,9 @@ public class VRInteraction : MonoBehaviour {
 		}
 
 		//Get input to move on yx/z plane (vertically)
-		if (Controller.GetPressDown (SteamVR_Controller.ButtonMask.Grip)) {
+		if (Controller.GetPressDown (SteamVR_Controller.ButtonMask.Grip) && (int)trackedObj.controllerIndex == 0) {
+			moveAxis = moveAxis + new Vector3 (0, -1, 0);
+		} else if (Controller.GetPressDown (SteamVR_Controller.ButtonMask.Grip) && (int)trackedObj.controllerIndex == 1) {
 			moveAxis = moveAxis + new Vector3 (0, 1, 0);
 		}
 
@@ -79,10 +86,19 @@ public class VRInteraction : MonoBehaviour {
 		ShowLaser ();
 		if (Controller.GetHairTriggerDown ()) {
 			RaycastHit hit;
+			//This allows laser to point out various data points
 			if (Physics.Raycast (trackedObj.transform.position, transform.forward, out hit, 100, dataPointMask)) {
-				hitPoint = hit.point;
 				ShowLaser (hit);
-			} 
+				pointText.GetComponent<TextMesh>().text = hit.collider.name;
+			} else if (Physics.Raycast (trackedObj.transform.position, transform.forward, out hit, 100, UIMask)) { //This allows user to hit various buttons
+				ShowLaser (hit);
+				var btn = hit.collider.GetComponent<Button> ();
+				if (btn != null) {
+					btn.onClick.Invoke ();
+				}
+			}
+		} else {
+			pointText.GetComponent<TextMesh>().text = "";
 		}
 
 		//Have the menu pause menu pop up when the application menu button is hit
@@ -107,6 +123,8 @@ public class VRInteraction : MonoBehaviour {
 
 	//Showing the laser when it hits a datapoint
 	private void ShowLaser(RaycastHit hit) {
+
+		hitPoint = hit.point;
 		// Show the laser
 		laser.SetActive(true);
 		// Position the laser object (which is actually a rectangular prism) between the controller
@@ -117,8 +135,5 @@ public class VRInteraction : MonoBehaviour {
 		// Scale the laser appropriately 
 		laserTransform.localScale = new Vector3(laserTransform.localScale.x, laserTransform.localScale.y,
 			hit.distance);
-
-		//Print out the dataPoints name to console. Later can make a pseudo pop up menu?
-		Debug.Log (hit.transform.gameObject.name);
 	}
 }
