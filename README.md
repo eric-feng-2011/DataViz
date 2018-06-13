@@ -81,13 +81,13 @@ When the VR implementation in HTC Vive is completely done, the following instruc
 
 Image Here
 
-1. Pause Menu - Hitting the application menu button should pause the application (one can no longer move around but should still be able to look around) and pop up a menu that has the options 'resume', 'change input', and 'quit'. The first resumes the application, the second moves back to the main menu scene for a new input, and the third quits the application. The user can select options using the laser and the touchpad click.
+1. Pause Menu - Hitting the application menu button should pause the application (one can no longer move around but should still be able to look around) and pop up a menu that has the options 'resume', 'change input', and 'quit'. The first resumes the application, the second moves back to the main menu scene for a new input, and the third quits the application. The user can select options using the laser and the hair trigger click.
 
 Image Here
 
-2. Movement / Teleportation - The user can use the touchpad to move in the horizontal plane. To move vertically, the user should press the grip buttons. The right grip button will move the user upwards while the left grip button will move the user downwards. Currently, movement is gradual and may induce motion-sickness, but a future version may have movements be in short bursts instead.
+2. Movement - The user can use the touchpad to move in the horizontal plane. To move vertically, the user should press the grip buttons. The right grip button will move the user upwards while the left grip button will move the user downwards. Currently, movement is gradual and may induce motion-sickness, but a future version may have movements be in short bursts instead.
 
-3. Selecting points to view - If the laser points to a data point, then the user can then hit the hair trigger to have the name of the data point show up in a GUI.
+3. Selecting points to view - If the laser points to a data point, then the user can then hit the hair trigger to have the name of the data point show up in a visible text element.
 
 [Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
 
@@ -123,7 +123,7 @@ After inputting the values, I hit the calculate PCA button, and the application 
 <img width="678" alt="example 1 plot" src="https://user-images.githubusercontent.com/31462296/41297618-241cb41a-6e25-11e8-9101-403de714ae07.png">
 
 ### Example 2
-In this example we will be plotting coordinate data regarding mouse embryo development from [coord_data.csv](Assets/Resources/coord_data.csv). The original data file was too large, and I used numpy to calculate these points. Credits for data go to (place author here).
+In this example we will be plotting coordinate data regarding mouse embryo development from [coord_data.csv](Assets/Resources/coord_data.csv). The original data file was too large, and I used numpy to calculate these points. Source:  Deng, Qiaolin, et al. “Single-Cell RNA-Seq Reveals Dynamic, Random Monoallelic Gene Expression in Mammalian Cells.” Science, vol. 343, no. 6167, 10 Jan. 2014, pp. 193 –196., doi:10.1126/science.1245316.
 
 1. Scale - 30 
 2. Directory - /Users/ericfeng/Desktop/BioSNTR
@@ -144,7 +144,7 @@ Final plot:
 <img width="665" alt="example 2 plot" src="https://user-images.githubusercontent.com/31462296/41298531-2d2ca0fe-6e27-11e8-8050-22c31b3aca5d.png">
 
 ### Example 3
-In this example we will be plotting the transpose of the data in [Processed_Data.csv](Assets/Resources/Processed_Data.csv). Credits for data go to (place author here).
+In this example we will be plotting the transpose of the data in [Processed_Data.csv](Assets/Resources/Processed_Data.csv). Source: Tsai MH, Chen X, Chandramouli GV, Chen Y, Yan H, Zhao S, Keng P, Liber HL, Coleman CN, Mitchell JB, Chuang EY: Transcriptional responses to ionizing radiation reveal that p53R2 protects against radiation-induced mutagenesis in human lymphoblastoid cells. Oncogene 2006, 25:622-632.
 
 1. Scale - 5 
 2. Directory - /Users/ericfeng/Desktop/BioSNTR
