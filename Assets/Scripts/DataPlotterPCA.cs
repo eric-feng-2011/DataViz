@@ -315,19 +315,19 @@ public class DataPlotterPCA : MonoBehaviour {
 		point_Count.transform.parent = labelHolder.transform;
 
 		//Update axis titles to Principle Components
-		GameObject x_Axis = Instantiate(textLabel, new Vector3(10, 3, 0), Quaternion.identity);
+		GameObject x_Axis = Instantiate(textLabel, new Vector3(scale, 1, 0), Quaternion.identity);
 		x_Axis.GetComponent<TextMesh> ().text = "X-Axis: PCA1"; 
 		x_Axis.transform.parent = labelHolder.transform;
 
-		GameObject y_Axis = Instantiate(textLabel, new Vector3(3, 10, 0), Quaternion.identity);
+		GameObject y_Axis = Instantiate(textLabel, new Vector3(1, scale, 0), Quaternion.identity);
 		y_Axis.GetComponent<TextMesh> ().text = "Y-Axis: PCA2"; 
 		y_Axis.transform.parent = labelHolder.transform;
 
-		GameObject z_Axis = Instantiate(textLabel, new Vector3(0, 3, 10), Quaternion.identity);
+		GameObject z_Axis = Instantiate(textLabel, new Vector3(0, 1, scale), Quaternion.identity);
 		z_Axis.GetComponent<TextMesh> ().text = "Z-Axis: PCA3"; 
 		z_Axis.transform.parent = labelHolder.transform;
 
-		numberAxis ();
+		//numberAxis ();
 
 	}
 
