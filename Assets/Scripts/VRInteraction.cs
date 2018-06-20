@@ -17,44 +17,54 @@ using UnityEngine.UI;
 
 public class VRInteraction : MonoBehaviour {
 
-    public Vector3 holdRotation = new Vector3(0, 0, 1);
+
+    //The majority of these variables are for use in the plot scene. Many of them will be left as none at the main menu
+    
+    // These variables will be used in all scenes
+    public LayerMask UIMask;                            // Mask to make sure laser can hit UI elements
+
+    public Vector3 holdRotation;                        // Vector3 variables to ensure that laser is positioned correctly according to controller
     public Vector3 holdPosition;
 
-	//Keep track of user that needs to move
-	public GameObject user;
+    //Keep track of laser prefab
+    public GameObject laserPrefab;
 
-	//PauseMenu
-	public GameObject pauseMenu;
+    // Instantiated laser gameobject and transform
+    private GameObject laser;
+    private Transform laserTransform;
+    // Where the laser should hit
+    private Vector3 hitPoint;
 
-	//Text to show datapoint selected
-	public GameObject pointText;
+    private SteamVR_TrackedObject trackedObj;
+    // Keeps track of controllers. Also which controller (L/R)
+    private SteamVR_Controller.Device Controller
+    {
+        get { return SteamVR_Controller.Input((int)trackedObj.index); }
+    }
 
-	//Keep track of laser prefab
-	public GameObject laserPrefab;
-	// Instantiated laser gameobject and information
-	private GameObject laser;
-	private Transform laserTransform;
-	// Where the laser should hit
-	private Vector3 hitPoint; 
+    // These variables will be used in only the plot scene
+    // Mask to make sure that the raycast hits dataPoints
+    public LayerMask dataPointMask;
 
-	//Mask to make sure that the raycast hits only dataPoints and UI components
-	public LayerMask dataPointMask;
-	public LayerMask UIMask;
+    //Keep track of user that needs to move
+    public GameObject user;
+
+    //PauseMenu
+    public GameObject pauseMenu;
+
+    //Text to show datapoint selected
+    public GameObject pointText;
 
     private int leftMostIndex;
     private int rightMostIndex;
 
-	private SteamVR_TrackedObject trackedObj;
-	// Keeps track of controllers. Also which controller (L/R)
-	private SteamVR_Controller.Device Controller
-	{
-		get { return SteamVR_Controller.Input((int)trackedObj.index); }
-	}
+    //Boolean to keep track of whether or not pauseMenu is up
+    private bool menuUp;
 
-	//Variables to keep track of input on touchpad and how that translates to 
-	//3D movement in the application
-	private Vector2 touchAxis;
-	private Vector3 moveAxis;
+    //Variables to keep track of input on touchpad and how that translates to 
+    //3D movement in the application
+    private Vector2 touchAxis;
+    private Vector3 moveAxis;
 
 	//Track the tracked object
 	void Awake() {
@@ -63,6 +73,7 @@ public class VRInteraction : MonoBehaviour {
         rightMostIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
 	}
 
+    //Create the laser
 	void Start() {
 		laser = Instantiate (laserPrefab);
 		laserTransform = laser.transform;
@@ -72,67 +83,88 @@ public class VRInteraction : MonoBehaviour {
 	// Get input from controller in order to move player
 	void Update () {
 
-		//Get input to move on xz plane (horizontally)
-		touchAxis = Controller.GetAxis ();
+        //Reset the laser to the normal size
+        laserTransform.localScale = new Vector3(laserTransform.localScale.x, laserTransform.localScale.y,
+            1);
+
+        //Get input to move on xz plane (horizontally) from touchPad
+        touchAxis = Controller.GetAxis ();
 		if (touchAxis != Vector2.zero) {
 			moveAxis = new Vector3 (touchAxis.x, 0, touchAxis.y);
 		} else {
 			moveAxis = new Vector3 (0, 0, 0);
 		}
 
-		//Get input to move on yx/z plane (vertically)
-		if (Controller.GetPressDown (SteamVR_Controller.ButtonMask.Grip) && (int)trackedObj.index == 0) {
-			moveAxis = moveAxis + new Vector3 (0, -1, 0);
-		} else if (Controller.GetPressDown (SteamVR_Controller.ButtonMask.Grip) && (int)trackedObj.index == 1) {
-			moveAxis = moveAxis + new Vector3 (0, 1, 0);
-		}
+        //Use input to move user on xz plane if user clicks touchPad button
+        if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
+        {
+            user.transform.position += moveAxis;
+        }
 
-		//Set user velocity
-		user.GetComponent<Rigidbody> ().velocity = moveAxis;
 
-        ShowLaser();
+		//Get input to move on yx/z plane (vertically) Left grip button moves player downward. Right grip button moves player upward
+		if (Controller.GetPressDown (SteamVR_Controller.ButtonMask.Grip) && (int)trackedObj.index == leftMostIndex) {
+            user.transform.position -= new Vector3(0, 1, 0);
+		} else if (Controller.GetPressDown (SteamVR_Controller.ButtonMask.Grip) && (int)trackedObj.index == rightMostIndex) {
+            user.transform.position += new Vector3(0, 1, 0);
+        }
 
-        //Have the laser pointer point to a datapoint and print out datapoint name
-        //if (Controller.GetHairTriggerDown ()) {
-        //	RaycastHit hit;
-        //	//This allows laser to point out various data points
-        //	if (Physics.Raycast (trackedObj.transform.position, transform.forward, out hit, 100, dataPointMask)) {
-        //		ShowLaser (hit);
-        //		pointText.GetComponent<TextMesh>().text = hit.collider.name;
-        //	} else if (Physics.Raycast (trackedObj.transform.position, transform.forward, out hit, 100, UIMask)) { //This allows user to hit various buttons
-        //		ShowLaser (hit);
-        //		var btn = hit.collider.GetComponent<Button> ();
-        //		if (btn != null) {
-        //			btn.onClick.Invoke ();
-        //		}
-        //	}
-        //} else {
-        //	pointText.GetComponent<TextMesh>().text = "";
-        //}
 
-        //Have the menu pause menu pop up when the application menu button is hit
-        //if (Controller.GetPressDown (SteamVR_Controller.ButtonMask.ApplicationMenu)) {
-        //	pauseMenu.SetActive (true);
-        //	Time.timeScale = 0.0f;
-        //}
+        //Laser interaction
+        // 1) Have the laser pointer point to a datapoint and print out datapoint name
+        // 2) Have the laser pointer to a UI element and allow user interaction
+        // 3) Otherwise, just show the normal laser
+
+        RaycastHit hit;
+        //This allows laser to point out various data points
+        if (Physics.Raycast(trackedObj.transform.position, transform.forward, out hit, 100, dataPointMask))
+        {
+            ShowLaser(hit);
+            pointText.GetComponent<TextMesh>().text = hit.collider.name;
+            Debug.Log("Point: " + hit.collider.name);
+        }
+        else if (Physics.Raycast(trackedObj.transform.position, transform.forward, out hit, 100, UIMask))
+        { //This allows user to hit various buttons
+            ShowLaser(hit);
+            var btn = hit.collider.GetComponent<Button>();
+            if (btn != null && Controller.GetHairTriggerDown())
+            {
+                btn.onClick.Invoke();
+            }
+        } else
+        {
+            ShowLaser();
+        }
+
+        //Have the pause menu pop up when the application menu button is hit
+        //Resumes the game when application menu hit again
+        if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
+        {
+            if (!menuUp)
+            {
+                menuUp = true;
+                pauseMenu.SetActive(true);
+                Time.timeScale = 0.0f;
+            }
+            else
+            {
+                menuUp = false;
+                pauseMenu.SetActive(false);
+                Time.timeScale = 1.0f;
+            }
+        }
     }
 
     //Showing the laser in general
     private void ShowLaser() { 
 
-        // Show the laser
+        // Show the laser and make move with controller
         laser.SetActive(true);
         laserTransform.parent = transform;
 
+        // Set the laser's position and rotation so that it matches the controller's
         laserTransform.localPosition= holdPosition;
         laserTransform.localEulerAngles = holdRotation;
-
-        // Position the laser object (which is actually a rectangular prism) in the forward direction
-        //laserTransform.position = transform.forward;
-        // Point the laser in the forward direction
-        //laserTransform.LookAt(transform.forward); 
-        // Scale the laser appropriately. Currently set to an arbitrary number
-        //laserTransform.localScale = Vector3.one * 10;
     }
 
     //Showing the laser when it hits a datapoint
