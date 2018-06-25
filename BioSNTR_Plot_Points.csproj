@@ -309,6 +309,7 @@
     <Compile Include="Assets\Scripts\CSVReader.cs" />
     <Compile Include="Assets\Scripts\DataPlotterPCA.cs" />
     <Compile Include="Assets\Scripts\HandleTextFile.cs" />
+    <Compile Include="Assets\Scripts\LaserBehavior.cs" />
     <Compile Include="Assets\Scripts\OrientLabels.cs" />
     <Compile Include="Assets\Scripts\PauseMenuNameNotMatch.cs" />
     <Compile Include="Assets\Scripts\PlayerPrefsX.cs" />

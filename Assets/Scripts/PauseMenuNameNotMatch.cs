@@ -21,6 +21,7 @@ public class PauseMenuNameNotMatch : MonoBehaviour {
 
 	//Resume the application by removing the pause menu and resuming time
 	public void resume() {
+        VRInteraction.menuUp = false;
 		pauseMenu.SetActive (false);
 		Time.timeScale = 1.0f;
 	}
