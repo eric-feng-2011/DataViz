@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEditor;
 using System;
 using System.IO;
@@ -10,6 +11,8 @@ using Accord.Statistics.Analysis;
 
 //@source Big Data Social Science Fellows @ Penn State - Plot Points 
 //PCA Method: Take in N columns of data, calculate PCA, and project data onto first 3 principal components
+
+//TODO: fix glitchy highlight, print out the name of the point that is pointed to
 public class DataPlotterPCA : MonoBehaviour {
 
 	// The various public variables used in the script
@@ -19,6 +22,13 @@ public class DataPlotterPCA : MonoBehaviour {
 	public GameObject textLabel;
 	public GameObject labelHolder;
 	public GameObject graph;
+
+    //Variable to create VR Legend
+    public GameObject legendPanel;
+    public GameObject legendItem;
+
+    //Variable to determine spacing between items in legend
+    private int legendSpacing = 5;
 
 	//Variables to keep track of the settings and inputs that the user had previously input in the main menu
 	private bool coorData = false;
@@ -116,30 +126,11 @@ public class DataPlotterPCA : MonoBehaviour {
 			double[][] transformedPoints = calcPCAProject ();
 			plot (transformedPoints);
 		}
+        createLegend();
 	}
 
-	//Create graph legend
-	void OnGUI() {
-
-		// If there are no known categories, we can not create a graph legend
-		if (!knownCategories) {
-			return;
-		}
-
-		List<string> keys = new List<string>(solidImages.Keys);
-
-		// Make a background box of height '(numLegend + 1) * 20'
-		GUI.Box(new Rect(10, 10, 100, (keys.Count + 1) * 20), "Graph Legend");
-
-		//Fill the GUI Box with an appropriate legend
-		for (int i = 1; i <= keys.Count; i++) {
-			GUI.Label (new Rect (15, 10 + i * 20, 60, 20), keys[i - 1]); 
-			GUI.DrawTexture (new Rect (80, 10 + i * 20, 15, 15), solidImages[keys[i - 1]]);
-		}
-	}
-
-	//Check all the playerprefs and reset various private variables above to match user input
-	private void checkPlayerPrefs() {
+    //Check all the playerprefs and reset various private variables above to match user input
+    private void checkPlayerPrefs() {
 		if (PlayerPrefs.HasKey (flipDataKey)) {
 			flipData = PlayerPrefsX.GetBool (flipDataKey);
 		}
@@ -331,7 +322,38 @@ public class DataPlotterPCA : MonoBehaviour {
 
 	}
 
-	private void numberAxis() {
+    private void createLegend()
+    {
+
+        // If there are no known categories, we can not create a graph legend
+        if (!knownCategories)
+        {
+            return;
+        }
+
+        List<string> keys = new List<string>(colorMap.Keys);
+
+        int offsetX = 0;
+        int offsetY = 0;
+        //Fill the panel with an appropriate legend
+        for (int i = 0; i < keys.Count; i++)
+        {
+            GameObject legendContent = Instantiate(legendItem, legendPanel.transform);
+            if (i != 0) {
+                offsetY += legendSpacing;
+            }
+            if (legendContent.transform.position.y - offsetY <= 0)
+            {
+                offsetY = 0;
+                offsetX += 20;
+            }
+            legendContent.transform.position = new Vector3(legendContent.transform.position.x + offsetX, legendContent.transform.position.y - offsetY, legendContent.transform.position.z);
+            legendContent.GetComponentInChildren<Text>().text = keys[i];
+            legendContent.GetComponentInChildren<Image>().color = colorMap[keys[i]];
+        }
+    }
+
+    private void numberAxis() {
 		// Every two units, place an appropriate number for the axis
 		// The numbers go from negative maxX to positive maxX
 		for (int i = -scale; i <= scale; i += 2) {

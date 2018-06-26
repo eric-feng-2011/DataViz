@@ -53,7 +53,7 @@ public class VRInteraction : MonoBehaviour {
     public GameObject pauseMenu;
 
     //Text to show datapoint selected
-    public GameObject pointText;
+    //public GameObject pointText;
 
     private static int leftMostIndex;
     private static int rightMostIndex;
@@ -119,7 +119,7 @@ public class VRInteraction : MonoBehaviour {
         if (Physics.Raycast(trackedObj.transform.position, transform.forward, out hit, 100, dataPointMask))
         {
             ShowLaser(hit);
-            pointText.GetComponent<TextMesh>().text = hit.collider.name;
+            //pointText.GetComponent<TextMesh>().text = hit.collider.name;
             Debug.Log("Point: " + hit.collider.name);
         }
         else if (Physics.Raycast(trackedObj.transform.position, transform.forward, out hit, 100, UIMask))
