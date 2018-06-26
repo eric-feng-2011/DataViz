@@ -131,7 +131,7 @@ public class UIBehavior : MonoBehaviour {
 		for (int i = 0; i < excludeCols.Count; i++) {
 			PlayerPrefs.SetInt (excludeColKey + i.ToString(), excludeCols [i]);
 		}
-		PlayerPrefs.SetInt ("numExcludedKey", numExcluded);
+		PlayerPrefs.SetInt (numExcludedKey, numExcluded);
 		PlayerPrefsX.SetBool (flipDataKey, flip);
 		PlayerPrefsX.SetBool (knownCategoriesKey, knowCat);
 		PlayerPrefsX.SetBool (coorDataKey, coor);

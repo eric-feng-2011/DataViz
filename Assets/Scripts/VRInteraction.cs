@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-//TODO: Add VR adaption - UI/Menu pop-up. Select points using laser. Fly in 3D (check motion sickness)
-//TODO: Revise Laser implementation so that one can click with it on menu and datapoints.
-//TODO: Consider changing moving mechanism in order to prevent motion sickness
-
 //@source https://www.raywenderlich.com/149239/htc-vive-tutorial-unity
 
 /* VR Adaption for HTC Vive. Controls as follows:
@@ -53,13 +49,15 @@ public class VRInteraction : MonoBehaviour {
     public GameObject pauseMenu;
 
     //Text to show datapoint selected
-    public GameObject pointText;
+    private TextMesh dataText;
 
-    private int leftMostIndex;
-    private int rightMostIndex;
+    //public GameObject pointText;
+    private static int leftMostIndex;
+    private static int rightMostIndex;
+
 
     //Boolean to keep track of whether or not pauseMenu is up
-    private bool menuUp;
+    public static bool menuUp;
 
     //Variables to keep track of input on touchpad and how that translates to 
     //3D movement in the application
@@ -75,6 +73,7 @@ public class VRInteraction : MonoBehaviour {
 
     //Create the laser
 	void Start() {
+        dataText = GetComponentInChildren<TextMesh>();
 		laser = Instantiate (laserPrefab);
 		laserTransform = laser.transform;
 	}
@@ -109,7 +108,6 @@ public class VRInteraction : MonoBehaviour {
             user.transform.position += new Vector3(0, 1, 0);
         }
 
-
         //Laser interaction
         // 1) Have the laser pointer point to a datapoint and print out datapoint name
         // 2) Have the laser pointer to a UI element and allow user interaction
@@ -120,20 +118,22 @@ public class VRInteraction : MonoBehaviour {
         if (Physics.Raycast(trackedObj.transform.position, transform.forward, out hit, 100, dataPointMask))
         {
             ShowLaser(hit);
-            pointText.GetComponent<TextMesh>().text = hit.collider.name;
-            Debug.Log("Point: " + hit.collider.name);
+            dataText.text = hit.collider.name;
         }
         else if (Physics.Raycast(trackedObj.transform.position, transform.forward, out hit, 100, UIMask))
         { //This allows user to hit various buttons
             ShowLaser(hit);
-            var btn = hit.collider.GetComponent<Button>();
+            var btn = hit.collider.GetComponentInParent<Button>();
             if (btn != null && Controller.GetHairTriggerDown())
             {
                 btn.onClick.Invoke();
             }
-        } else
+            dataText.text = "";
+        }
+        else
         {
             ShowLaser();
+            dataText.text = "";
         }
 
         //Have the pause menu pop up when the application menu button is hit

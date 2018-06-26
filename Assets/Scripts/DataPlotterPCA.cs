@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEditor;
 using System;
 using System.IO;
@@ -10,6 +11,8 @@ using Accord.Statistics.Analysis;
 
 //@source Big Data Social Science Fellows @ Penn State - Plot Points 
 //PCA Method: Take in N columns of data, calculate PCA, and project data onto first 3 principal components
+
+//TODO: print out the name of the point that is pointed to. Orient Labels correctly
 public class DataPlotterPCA : MonoBehaviour {
 
 	// The various public variables used in the script
@@ -19,6 +22,13 @@ public class DataPlotterPCA : MonoBehaviour {
 	public GameObject textLabel;
 	public GameObject labelHolder;
 	public GameObject graph;
+
+    //Variable to create VR Legend
+    public GameObject legendPanel;
+    public GameObject legendItem;
+
+    //Variable to determine spacing between items in legend
+    private int legendSpacing = 5;
 
 	//Variables to keep track of the settings and inputs that the user had previously input in the main menu
 	private bool coorData = false;
@@ -52,9 +62,6 @@ public class DataPlotterPCA : MonoBehaviour {
 	//Dictionary to hold mappings from species to color
 	private Dictionary<string, Color> colorMap;
 
-	//Dictionary to hold the solid color images derived from the colorMap. Used for the graph legend
-	private Dictionary<string, Texture2D> solidImages;
-
 	//Private list to hold the keys of the dictionary in data
 	private List<string> columnList;
 
@@ -74,8 +81,6 @@ public class DataPlotterPCA : MonoBehaviour {
 		checkPlayerPrefs ();
 
 		colorMap = new Dictionary<String, Color>();
-		solidImages = new Dictionary<string, Texture2D> ();
-
 	}
 
 	// Use this for initialization
@@ -100,7 +105,6 @@ public class DataPlotterPCA : MonoBehaviour {
 		if (knownCategories) {
 			ColorGraph.createColor (pointList, categoryColumn);
 			colorMap = ColorGraph.getColorMap ();
-			solidImages = ColorGraph.getSolidImages ();
 		}
 
 		//Plot according to input data given
@@ -116,30 +120,11 @@ public class DataPlotterPCA : MonoBehaviour {
 			double[][] transformedPoints = calcPCAProject ();
 			plot (transformedPoints);
 		}
+        createLegend();
 	}
 
-	//Create graph legend
-	void OnGUI() {
-
-		// If there are no known categories, we can not create a graph legend
-		if (!knownCategories) {
-			return;
-		}
-
-		List<string> keys = new List<string>(solidImages.Keys);
-
-		// Make a background box of height '(numLegend + 1) * 20'
-		GUI.Box(new Rect(10, 10, 100, (keys.Count + 1) * 20), "Graph Legend");
-
-		//Fill the GUI Box with an appropriate legend
-		for (int i = 1; i <= keys.Count; i++) {
-			GUI.Label (new Rect (15, 10 + i * 20, 60, 20), keys[i - 1]); 
-			GUI.DrawTexture (new Rect (80, 10 + i * 20, 15, 15), solidImages[keys[i - 1]]);
-		}
-	}
-
-	//Check all the playerprefs and reset various private variables above to match user input
-	private void checkPlayerPrefs() {
+    //Check all the playerprefs and reset various private variables above to match user input
+    private void checkPlayerPrefs() {
 		if (PlayerPrefs.HasKey (flipDataKey)) {
 			flipData = PlayerPrefsX.GetBool (flipDataKey);
 		}
@@ -279,17 +264,17 @@ public class DataPlotterPCA : MonoBehaviour {
 			// Make dataPoint child of PointHolder object 
 			dataPoint.transform.parent = PointHolder.transform;
 
-			string type = "Point";
+            //Default name of point
+			string type = "Point: " + i;
 
 			// Gets material color and sets it to a new RGBA color we define
 			if (knownCategories) {
 				type = Convert.ToString(pointList [i] [columnList[categoryColumn]]);
-				//Debug.Log ("Species of point " + i + ": " + species);
 				dataPoint.GetComponent<Renderer> ().material.color = colorMap [type];
 			}
 
 			// Assigns original values to dataPointName
-			string dataPointName = type + ": (" + x + ", " + y + ", " + z + ")";
+			string dataPointName = type;
 
 			// Assigns name to the individual data point
 			dataPoint.transform.name = dataPointName;
@@ -307,47 +292,73 @@ public class DataPlotterPCA : MonoBehaviour {
 		GameObject data_Label = Instantiate (textLabel, new Vector3 (12, 10, 0), Quaternion.identity);
 		data_Label.GetComponent<TextMesh> ().text = inputfile;
 		data_Label.transform.parent = labelHolder.transform;
+        increaseResolution(data_Label);
 
 		// Update point counter
 		GameObject point_Count = Instantiate(textLabel, new Vector3(12, 8, 0), Quaternion.identity);
 		point_Count.GetComponent<TextMesh> ().text = "Number of Points: "
 				+ pointList.Count.ToString ("0");
 		point_Count.transform.parent = labelHolder.transform;
+        increaseResolution(point_Count);
 
-		//Update axis titles to Principle Components
-		GameObject x_Axis = Instantiate(textLabel, new Vector3(scale, 1, 0), Quaternion.identity);
+        //Update axis titles to Principle Components
+        GameObject x_Axis = Instantiate(textLabel, new Vector3(scale, 1, 0), Quaternion.identity);
 		x_Axis.GetComponent<TextMesh> ().text = "X-Axis: PCA1"; 
 		x_Axis.transform.parent = labelHolder.transform;
+        increaseResolution(x_Axis);
 
-		GameObject y_Axis = Instantiate(textLabel, new Vector3(1, scale, 0), Quaternion.identity);
+        GameObject y_Axis = Instantiate(textLabel, new Vector3(1, scale, 0), Quaternion.identity);
 		y_Axis.GetComponent<TextMesh> ().text = "Y-Axis: PCA2"; 
 		y_Axis.transform.parent = labelHolder.transform;
+        increaseResolution(y_Axis);
 
-		GameObject z_Axis = Instantiate(textLabel, new Vector3(0, 1, scale), Quaternion.identity);
+        GameObject z_Axis = Instantiate(textLabel, new Vector3(0, 1, scale), Quaternion.identity);
 		z_Axis.GetComponent<TextMesh> ().text = "Z-Axis: PCA3"; 
 		z_Axis.transform.parent = labelHolder.transform;
+        increaseResolution(z_Axis);
+    }
 
-		//numberAxis ();
+    private void increaseResolution(GameObject label)
+    {
+        if (!label.CompareTag("Label"))
+        {
+            return;
+        }
 
-	}
+        label.GetComponent<TextMesh>().fontSize = 100;
+        label.transform.localScale = new Vector3(0.25f, 0.25f, 1);
+    }
 
-	private void numberAxis() {
-		// Every two units, place an appropriate number for the axis
-		// The numbers go from negative maxX to positive maxX
-		for (int i = -scale; i <= scale; i += 2) {
-			GameObject xNum = Instantiate (textLabel, new Vector3 (i, 0, 0), Quaternion.identity);
-			xNum.GetComponent<TextMesh> ().text = (i/newScale).ToString ("0.0");
-			xNum.transform.parent = graphHolder.transform;
+    private void createLegend()
+    {
 
-			GameObject yNum = Instantiate (textLabel, new Vector3 (0, i, 0), Quaternion.identity);
-			yNum.GetComponent<TextMesh> ().text = (i/newScale).ToString ("0.0");
-			yNum.transform.parent = graphHolder.transform;
+        // If there are no known categories, we can not create a graph legend
+        if (!knownCategories)
+        {
+            return;
+        }
 
-			GameObject zNum = Instantiate (textLabel, new Vector3 (0, 0, i), Quaternion.identity);
-			zNum.GetComponent<TextMesh> ().text = (i/newScale).ToString ("0.0");
-			zNum.transform.parent = graphHolder.transform;
-		}
-	}
+        List<string> keys = new List<string>(colorMap.Keys);
+
+        int offsetX = 0;
+        int offsetY = 0;
+        //Fill the panel with an appropriate legend
+        for (int i = 0; i < keys.Count; i++)
+        {
+            GameObject legendContent = Instantiate(legendItem, legendPanel.transform);
+            if (i != 0) {
+                offsetY += legendSpacing;
+            }
+            if (legendContent.transform.position.y - offsetY <= 0)
+            {
+                offsetY = 0;
+                offsetX += 20;
+            }
+            legendContent.transform.position = new Vector3(legendContent.transform.position.x + offsetX, legendContent.transform.position.y - offsetY, legendContent.transform.position.z);
+            legendContent.GetComponentInChildren<Text>().text = keys[i];
+            legendContent.GetComponentInChildren<Image>().color = colorMap[keys[i]];
+        }
+    }
 
 	// Method to find the largest value in an array
 	private float FindMaxValue(double[] array)
