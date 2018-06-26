@@ -15,6 +15,7 @@ public class OrientLabels : MonoBehaviour {
  */
 
 	public bool faceCamera = true;
+    public Camera cameraVR;
 
 	private GameObject[] labels;  // Array, stores all GameObjects that should be kept aligned with camera
 
@@ -26,13 +27,12 @@ public class OrientLabels : MonoBehaviour {
 	{
 		//populates the array "labels" with gameobjects that have the correct tag, defined in inspector
 		labels = GameObject.FindGameObjectsWithTag(targetTag);                 
-
 	}
 
 	// Update is called once per frame
 	void Update () {
-
-		orientLables ();  // remove if instead you are calling orientLables directly, whenever the camera has moved to make save processing time
+        labels = GameObject.FindGameObjectsWithTag(targetTag);
+        orientLables();  // remove if instead you are calling orientLables directly, whenever the camera has moved to make save processing time
 	}
 
 	// Method definition
@@ -43,9 +43,9 @@ public class OrientLabels : MonoBehaviour {
 		foreach (GameObject go in labels) {
 
 			// create new position Vector 3 so that object does not rotate around y axis
-			Vector3 targetPosition = new Vector3(Camera.main.transform.position.x,
+			Vector3 targetPosition = new Vector3(cameraVR.transform.position.x,
 				go.transform.position.y,
-				Camera.main.transform.position.z);
+				cameraVR.transform.position.z);
 
 
 			// Reverse transform or not

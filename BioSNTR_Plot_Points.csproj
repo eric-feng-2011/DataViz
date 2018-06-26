@@ -308,12 +308,10 @@
     <Compile Include="Assets\Scripts\ColorGraph.cs" />
     <Compile Include="Assets\Scripts\CSVReader.cs" />
     <Compile Include="Assets\Scripts\DataPlotterPCA.cs" />
-    <Compile Include="Assets\Scripts\HandleTextFile.cs" />
     <Compile Include="Assets\Scripts\LaserBehavior.cs" />
     <Compile Include="Assets\Scripts\OrientLabels.cs" />
     <Compile Include="Assets\Scripts\PauseMenuNameNotMatch.cs" />
     <Compile Include="Assets\Scripts\PlayerPrefsX.cs" />
-    <Compile Include="Assets\Scripts\Test.cs" />
     <Compile Include="Assets\Scripts\TransposeData.cs" />
     <Compile Include="Assets\Scripts\UIBehavior.cs" />
     <Compile Include="Assets\Scripts\VRInteraction.cs" />

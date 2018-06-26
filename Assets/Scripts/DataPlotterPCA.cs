@@ -12,7 +12,7 @@ using Accord.Statistics.Analysis;
 //@source Big Data Social Science Fellows @ Penn State - Plot Points 
 //PCA Method: Take in N columns of data, calculate PCA, and project data onto first 3 principal components
 
-//TODO: fix glitchy highlight, print out the name of the point that is pointed to
+//TODO: print out the name of the point that is pointed to. Orient Labels correctly
 public class DataPlotterPCA : MonoBehaviour {
 
 	// The various public variables used in the script
@@ -62,9 +62,6 @@ public class DataPlotterPCA : MonoBehaviour {
 	//Dictionary to hold mappings from species to color
 	private Dictionary<string, Color> colorMap;
 
-	//Dictionary to hold the solid color images derived from the colorMap. Used for the graph legend
-	private Dictionary<string, Texture2D> solidImages;
-
 	//Private list to hold the keys of the dictionary in data
 	private List<string> columnList;
 
@@ -84,8 +81,6 @@ public class DataPlotterPCA : MonoBehaviour {
 		checkPlayerPrefs ();
 
 		colorMap = new Dictionary<String, Color>();
-		solidImages = new Dictionary<string, Texture2D> ();
-
 	}
 
 	// Use this for initialization
@@ -110,7 +105,6 @@ public class DataPlotterPCA : MonoBehaviour {
 		if (knownCategories) {
 			ColorGraph.createColor (pointList, categoryColumn);
 			colorMap = ColorGraph.getColorMap ();
-			solidImages = ColorGraph.getSolidImages ();
 		}
 
 		//Plot according to input data given
@@ -270,17 +264,17 @@ public class DataPlotterPCA : MonoBehaviour {
 			// Make dataPoint child of PointHolder object 
 			dataPoint.transform.parent = PointHolder.transform;
 
-			string type = "Point";
+            //Default name of point
+			string type = "Point: " + i;
 
 			// Gets material color and sets it to a new RGBA color we define
 			if (knownCategories) {
 				type = Convert.ToString(pointList [i] [columnList[categoryColumn]]);
-				//Debug.Log ("Species of point " + i + ": " + species);
 				dataPoint.GetComponent<Renderer> ().material.color = colorMap [type];
 			}
 
 			// Assigns original values to dataPointName
-			string dataPointName = type + ": (" + x + ", " + y + ", " + z + ")";
+			string dataPointName = type;
 
 			// Assigns name to the individual data point
 			dataPoint.transform.name = dataPointName;
@@ -298,29 +292,42 @@ public class DataPlotterPCA : MonoBehaviour {
 		GameObject data_Label = Instantiate (textLabel, new Vector3 (12, 10, 0), Quaternion.identity);
 		data_Label.GetComponent<TextMesh> ().text = inputfile;
 		data_Label.transform.parent = labelHolder.transform;
+        increaseResolution(data_Label);
 
 		// Update point counter
 		GameObject point_Count = Instantiate(textLabel, new Vector3(12, 8, 0), Quaternion.identity);
 		point_Count.GetComponent<TextMesh> ().text = "Number of Points: "
 				+ pointList.Count.ToString ("0");
 		point_Count.transform.parent = labelHolder.transform;
+        increaseResolution(point_Count);
 
-		//Update axis titles to Principle Components
-		GameObject x_Axis = Instantiate(textLabel, new Vector3(scale, 1, 0), Quaternion.identity);
+        //Update axis titles to Principle Components
+        GameObject x_Axis = Instantiate(textLabel, new Vector3(scale, 1, 0), Quaternion.identity);
 		x_Axis.GetComponent<TextMesh> ().text = "X-Axis: PCA1"; 
 		x_Axis.transform.parent = labelHolder.transform;
+        increaseResolution(x_Axis);
 
-		GameObject y_Axis = Instantiate(textLabel, new Vector3(1, scale, 0), Quaternion.identity);
+        GameObject y_Axis = Instantiate(textLabel, new Vector3(1, scale, 0), Quaternion.identity);
 		y_Axis.GetComponent<TextMesh> ().text = "Y-Axis: PCA2"; 
 		y_Axis.transform.parent = labelHolder.transform;
+        increaseResolution(y_Axis);
 
-		GameObject z_Axis = Instantiate(textLabel, new Vector3(0, 1, scale), Quaternion.identity);
+        GameObject z_Axis = Instantiate(textLabel, new Vector3(0, 1, scale), Quaternion.identity);
 		z_Axis.GetComponent<TextMesh> ().text = "Z-Axis: PCA3"; 
 		z_Axis.transform.parent = labelHolder.transform;
+        increaseResolution(z_Axis);
+    }
 
-		//numberAxis ();
+    private void increaseResolution(GameObject label)
+    {
+        if (!label.CompareTag("Label"))
+        {
+            return;
+        }
 
-	}
+        label.GetComponent<TextMesh>().fontSize = 100;
+        label.transform.localScale = new Vector3(0.25f, 0.25f, 1);
+    }
 
     private void createLegend()
     {
@@ -352,24 +359,6 @@ public class DataPlotterPCA : MonoBehaviour {
             legendContent.GetComponentInChildren<Image>().color = colorMap[keys[i]];
         }
     }
-
-    private void numberAxis() {
-		// Every two units, place an appropriate number for the axis
-		// The numbers go from negative maxX to positive maxX
-		for (int i = -scale; i <= scale; i += 2) {
-			GameObject xNum = Instantiate (textLabel, new Vector3 (i, 0, 0), Quaternion.identity);
-			xNum.GetComponent<TextMesh> ().text = (i/newScale).ToString ("0.0");
-			xNum.transform.parent = graphHolder.transform;
-
-			GameObject yNum = Instantiate (textLabel, new Vector3 (0, i, 0), Quaternion.identity);
-			yNum.GetComponent<TextMesh> ().text = (i/newScale).ToString ("0.0");
-			yNum.transform.parent = graphHolder.transform;
-
-			GameObject zNum = Instantiate (textLabel, new Vector3 (0, 0, i), Quaternion.identity);
-			zNum.GetComponent<TextMesh> ().text = (i/newScale).ToString ("0.0");
-			zNum.transform.parent = graphHolder.transform;
-		}
-	}
 
 	// Method to find the largest value in an array
 	private float FindMaxValue(double[] array)

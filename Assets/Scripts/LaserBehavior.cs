@@ -21,9 +21,10 @@ public class LaserBehavior : MonoBehaviour {
         //UILayerInt = UILayer.value;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         btn = other.GetComponentInParent<Button>();
+        Debug.Log("Trigger Name: " + other.name);
         if (btn != null)
         {
             Debug.Log("Enter Name: " + other.name);
@@ -31,13 +32,13 @@ public class LaserBehavior : MonoBehaviour {
         }
     }
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (btn)
-        {
-            Debug.Log("Exit Name: " + other.name);
-            btn = null;
-            other.gameObject.GetComponent<Renderer>().material = transparent;
-        }
-    }
+    //private void OnTriggerExit(Collider other)
+    //{
+    //    if (btn)
+    //    {
+    //        Debug.Log("Exit Name: " + other.name);
+    //        btn = null;
+    //        other.gameObject.GetComponent<Renderer>().material = transparent;
+    //    }
+    //}
 }
