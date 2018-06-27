@@ -12,7 +12,6 @@ using Accord.Statistics.Analysis;
 //@source Big Data Social Science Fellows @ Penn State - Plot Points 
 //PCA Method: Take in N columns of data, calculate PCA, and project data onto first 3 principal components
 
-//TODO: print out the name of the point that is pointed to. Orient Labels correctly
 public class DataPlotterPCA : MonoBehaviour {
 
 	// The various public variables used in the script
@@ -28,7 +27,7 @@ public class DataPlotterPCA : MonoBehaviour {
     public GameObject legendItem;
 
     //Variable to determine spacing between items in legend
-    private int legendSpacing = 5;
+    private float legendSpacing = 0.075f;
 
 	//Variables to keep track of the settings and inputs that the user had previously input in the main menu
 	private bool coorData = false;
@@ -340,8 +339,8 @@ public class DataPlotterPCA : MonoBehaviour {
 
         List<string> keys = new List<string>(colorMap.Keys);
 
-        int offsetX = 0;
-        int offsetY = 0;
+        float offsetX = 0;
+        float offsetY = 0;
         //Fill the panel with an appropriate legend
         for (int i = 0; i < keys.Count; i++)
         {
@@ -351,8 +350,9 @@ public class DataPlotterPCA : MonoBehaviour {
             }
             if (legendContent.transform.position.y - offsetY <= 0)
             {
+                Debug.Log("True");
                 offsetY = 0;
-                offsetX += 20;
+                offsetX += 0.25f;
             }
             legendContent.transform.position = new Vector3(legendContent.transform.position.x + offsetX, legendContent.transform.position.y - offsetY, legendContent.transform.position.z);
             legendContent.GetComponentInChildren<Text>().text = keys[i];

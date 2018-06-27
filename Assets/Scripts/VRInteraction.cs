@@ -22,6 +22,9 @@ public class VRInteraction : MonoBehaviour {
     public Vector3 holdRotation;                        // Vector3 variables to ensure that laser is positioned correctly according to controller
     public Vector3 holdPosition;
 
+    //How fast the user moves
+    public float speed;
+
     //Keep track of laser prefab
     public GameObject laserPrefab;
 
@@ -38,15 +41,29 @@ public class VRInteraction : MonoBehaviour {
         get { return SteamVR_Controller.Input((int)trackedObj.index); }
     }
 
-    // These variables will be used in only the plot scene
+    //PauseMenu
+    public GameObject pauseMenu;
+
+    //Boolean to keep track of whether or not pauseMenu is up
+    public static bool menuUp;
+
+    //These variables will be used in only the mainmenu scene
+
+    //Track the initial x position of the controller when on slider
+
+    private float initialXPos;
+    //Track whether or not the controller is on the slider
+    private bool onSlider;
+
+    //CoRoutine to track slider values
+    private Coroutine sliderValue;
+
+    // These variables will be used primarily in only the plot scene
     // Mask to make sure that the raycast hits dataPoints
     public LayerMask dataPointMask;
 
     //Keep track of user that needs to move
     public GameObject user;
-
-    //PauseMenu
-    public GameObject pauseMenu;
 
     //Text to show datapoint selected
     private TextMesh dataText;
@@ -54,10 +71,6 @@ public class VRInteraction : MonoBehaviour {
     //public GameObject pointText;
     private static int leftMostIndex;
     private static int rightMostIndex;
-
-
-    //Boolean to keep track of whether or not pauseMenu is up
-    public static bool menuUp;
 
     //Variables to keep track of input on touchpad and how that translates to 
     //3D movement in the application
@@ -97,15 +110,15 @@ public class VRInteraction : MonoBehaviour {
         //Use input to move user on xz plane if user clicks touchPad button
         if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
         {
-            user.transform.position += moveAxis;
+            user.transform.position += moveAxis * speed;
         }
 
 
 		//Get input to move on yx/z plane (vertically) Left grip button moves player downward. Right grip button moves player upward
 		if (Controller.GetPressDown (SteamVR_Controller.ButtonMask.Grip) && (int)trackedObj.index == leftMostIndex) {
-            user.transform.position -= new Vector3(0, 1, 0);
+            user.transform.position -= new Vector3(0, 1, 0) * speed;
 		} else if (Controller.GetPressDown (SteamVR_Controller.ButtonMask.Grip) && (int)trackedObj.index == rightMostIndex) {
-            user.transform.position += new Vector3(0, 1, 0);
+            user.transform.position += new Vector3(0, 1, 0) * speed;
         }
 
         //Laser interaction
@@ -121,12 +134,29 @@ public class VRInteraction : MonoBehaviour {
             dataText.text = hit.collider.name;
         }
         else if (Physics.Raycast(trackedObj.transform.position, transform.forward, out hit, 100, UIMask))
-        { //This allows user to hit various buttons
+        { //This allows user to hit various buttons and interact with a slider
             ShowLaser(hit);
             var btn = hit.collider.GetComponentInParent<Button>();
             if (btn != null && Controller.GetHairTriggerDown())
             {
                 btn.onClick.Invoke();
+            }
+            var slider = hit.collider.GetComponentInParent<Slider>();
+            if (slider != null && Controller.GetHairTrigger())
+            {
+                if (!onSlider)
+                {
+                    onSlider = true;
+                    initialXPos = trackedObj.transform.position.x;
+                    Debug.Log("initialXPos: " + initialXPos);
+                }
+                slider.value = (-(trackedObj.transform.position.x) + initialXPos) * 500;
+
+
+                if (Controller.GetHairTriggerUp())
+                {
+                    onSlider = false;
+                }
             }
             dataText.text = "";
         }
@@ -134,6 +164,7 @@ public class VRInteraction : MonoBehaviour {
         {
             ShowLaser();
             dataText.text = "";
+            onSlider = false;
         }
 
         //Have the pause menu pop up when the application menu button is hit
