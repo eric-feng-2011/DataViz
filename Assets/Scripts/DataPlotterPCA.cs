@@ -26,9 +26,6 @@ public class DataPlotterPCA : MonoBehaviour {
     public GameObject legendPanel;
     public GameObject legendItem;
 
-    //Variable to determine spacing between items in legend
-    private float legendSpacing = 0.075f;
-
 	//Variables to keep track of the settings and inputs that the user had previously input in the main menu
 	private bool coorData = false;
 	private bool flipData = false;
@@ -345,16 +342,17 @@ public class DataPlotterPCA : MonoBehaviour {
         for (int i = 0; i < keys.Count; i++)
         {
             GameObject legendContent = Instantiate(legendItem, legendPanel.transform);
+            RectTransform legendRect = legendContent.GetComponent<RectTransform>();
             if (i != 0) {
-                offsetY += legendSpacing;
+                offsetY -= 15f;
             }
-            if (legendContent.transform.position.y - offsetY <= 0)
+            if (legendRect.anchoredPosition.y + offsetY <= -40)
             {
                 Debug.Log("True");
                 offsetY = 0;
-                offsetX += 0.25f;
+                offsetX += 60f;
             }
-            legendContent.transform.position = new Vector3(legendContent.transform.position.x + offsetX, legendContent.transform.position.y - offsetY, legendContent.transform.position.z);
+            legendRect.anchoredPosition3D = new Vector3(legendRect.anchoredPosition3D.x + offsetX, legendRect.anchoredPosition3D.y + offsetY, 0);
             legendContent.GetComponentInChildren<Text>().text = keys[i];
             legendContent.GetComponentInChildren<Image>().color = colorMap[keys[i]];
         }
