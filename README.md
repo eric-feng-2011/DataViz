@@ -20,7 +20,7 @@ The goal of this program is to create a tool for visualizing 3-Dimensional Princ
 
 ## Project Status
 
-This project is still in development. More specifically, the VR components have not been tested as no there is no appropriate hardware in my general vicinity. This should be resolved by 7/1/2018.
+This project is effectively completed. The VR adaption has been tested with the HTC Vive. The Unity Package for developers can be found [here](https://drive.google.com/file/d/1UDTJ2G_HODxaq3XQruNA8PvvIfQha7PF/view?usp=sharing). The Unity Build for the application has not been built (yet).
 
 [Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
 
@@ -48,7 +48,7 @@ The PCA implementations are from Accord Version 3.0.2; the reason why I chose to
 ## How to Use
 
 ### Plotting the PCA in 3D
-When the application first starts the user should see a main menu that looks something like the following: 
+When the application first starts the user should see a main menu that looks something like the following. This menu is only viewable outside the headset as, through personal experience, inputting information via keyboard and mouse is easier than via the Vive. 
 
 <img width="474" alt="vr app menu 1" src="https://user-images.githubusercontent.com/31462296/41296176-fbe6155c-6e21-11e8-9bbb-f27565770840.png">
 
@@ -69,25 +69,25 @@ In these instructions, I will go over the meaning of each of the possible inputs
 
 9. Cat. Column - If the previous value is true, then input the column where the categorys are. If the previous value is false, this option will be grayed-out. IMPORTANT: Do not double input the category column into both the exclude column option and here. 
 
-10. Calculate PCA - This graphically renders the data from the input file according to the previous inputs. Clicking on this button will move the user to a new scene where the previous options will not be available. To go back to this input scene, see User Interaction - Pause Menu.
+10. Calculate PCA - This graphically renders the data from the input file according to the previous inputs. Clicking on this button will move the user to a new scene where the previous options will not be available. To go back to this input scene, see User Interaction - Menu.
 
 11. Back - Return to the previous menu.
 
 ### User Interaction
 
-When the VR implementation in HTC Vive is completely done, the following instructions should apply for User Interaction:
+VR adaptation for the Vive is only present in the graph scene. The following instructions apply for User Interaction:
 
 0. There should be a constant, active laser coming out of the front of the HTC Vive controller.
 
 Image Here
 
-1. Pause Menu - Hitting the application menu button should pause the application (one can no longer move around but should still be able to look around) and pop up a menu that has the options 'resume', 'change input', and 'quit'. The first resumes the application, the second moves back to the main menu scene for a new input, and the third quits the application. The user can select options using the laser and the hair trigger click.
+1. Menu - Hitting the application menu button will reveal a main menu where the user can perform extra actions and view the graph legend (if there is one). The extra actions include 'close menu', 'change input', and 'quit'. The first closes the menu, the second moves back to the main menu scene for a new input, and the third quits the application. The user can select options using the laser and the hair trigger (index finger). The menu will follow the user's vision.
 
 Image Here
 
-2. Movement - The user can use the touchpad to move in the horizontal plane. To move vertically, the user should press the grip buttons. The right grip button will move the user upwards while the left grip button will move the user downwards. Currently, movement is gradual and may induce motion-sickness, but a future version may have movements be in short bursts instead.
+2. Movement - The user can use the touchpad to move in the horizontal plane. To move vertically, the user should press the grip buttons. The right grip button will move the user upwards while the left grip button will move the user downwards. Movement is in short bursts in order to mitigate motion sickness.
 
-3. Selecting points to view - If the laser points to a data point, then the user can then hit the hair trigger to have the name of the data point show up in a visible text element.
+3. Selecting points to view - If the laser points to a data point, then the name of the data point will automatically show up in a visible text element. The name of the data point is the category the data point falls in; if there are no categories then the name defaults to the data number from the input file.
 
 [Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
 
@@ -168,12 +168,15 @@ Final plot:
 
 ## External References
 The following are all third-parties that I have used code implementations from or referenced in the development of this application:
+
 1. CSV-Reader from PrinzEugn
 2. The basic data plotting functionality from Big Data Social Science Fellows @ Penn State. 
 3. HTC Vive controller scripts from Eric Van de Kerckhove on raywenderlich.com
 4. Reading Text Files from a directory outside Unity from Daniel Robledo on Unity Support
 5. Accord Framework for PCA
 6. Unity and Microsoft Scripting Documentation
+7. StackOverFlow
+8. Other. This space is for all sources that I failed to mention.
 
 [Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
 
