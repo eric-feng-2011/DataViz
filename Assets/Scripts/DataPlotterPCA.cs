@@ -126,20 +126,20 @@ public class DataPlotterPCA : MonoBehaviour {
 		}
 		if (PlayerPrefs.HasKey (categoryColumnKey)) {
 			categoryColumn = PlayerPrefs.GetInt (categoryColumnKey);
-		}
-		if (PlayerPrefs.HasKey (knownCategoriesKey)) {
+        }
+        if (PlayerPrefs.HasKey (knownCategoriesKey)) {
 			knownCategories = PlayerPrefsX.GetBool (knownCategoriesKey);
-		}
-		if (PlayerPrefs.HasKey (inputFileKey)) {
+        }
+        if (PlayerPrefs.HasKey (inputFileKey)) {
 			inputfile = PlayerPrefs.GetString (inputFileKey);
-		}
-		if (PlayerPrefs.HasKey (scaleKey)) {
+        }
+        if (PlayerPrefs.HasKey (scaleKey)) {
 			scale = PlayerPrefs.GetInt (scaleKey);
-		}
-		if (PlayerPrefs.HasKey (coorDataKey)) {
+        }
+        if (PlayerPrefs.HasKey (coorDataKey)) {
 			coorData = PlayerPrefsX.GetBool (coorDataKey);
-		}
-		if (PlayerPrefs.HasKey(directoryKey)) {
+        }
+        if (PlayerPrefs.HasKey(directoryKey)) {
 			directory = PlayerPrefs.GetString(directoryKey);
 		}
 		if (PlayerPrefs.HasKey (numExcludedKey)) {
@@ -156,18 +156,28 @@ public class DataPlotterPCA : MonoBehaviour {
 
 	//Read in a file from outside Unity and load it into a file named 'input.csv'
 	void writeFile() {
-		inputfile = directory + "/" + inputfile;
-		foreach (string file in Directory.GetFiles(directory))
+        //Accounts for difference between OS path writing
+        if (directory.Contains("\\"))
+        {
+            inputfile = directory + "\\" + inputfile;
+        } else if (directory.Contains("/"))
+        {
+            inputfile = directory + "/" + inputfile;
+        }
+
+        foreach (string file in Directory.GetFiles(directory))
 		{
 			if (file == inputfile) {
 				string contents = File.ReadAllText (file);
 
 				string path = "Assets/Resources/input.csv";
 
-				//Write some text to the input.txt file
-				StreamWriter writer = new StreamWriter(path, false);
-				writer.WriteLine(contents);
-				writer.Close();
+                //Write some text to the input.txt file
+                using (StreamWriter writer = new StreamWriter(path, false))
+                {
+                    writer.WriteLine(contents);
+                    writer.Close();
+                }
 
 				//Re-import the file to update the reference in the editor
 				AssetDatabase.ImportAsset(path); 
@@ -348,7 +358,6 @@ public class DataPlotterPCA : MonoBehaviour {
             }
             if (legendRect.anchoredPosition.y + offsetY <= -40)
             {
-                Debug.Log("True");
                 offsetY = 0;
                 offsetX += 60f;
             }
