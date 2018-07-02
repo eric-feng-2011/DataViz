@@ -123,6 +123,7 @@ I fill out the various inputs of the main menu accordingly:
 5. False. iris.csv does not contain coordinate data
 
 ![iris1](https://user-images.githubusercontent.com/31462296/42175387-139cd0ec-7dda-11e8-933f-4a9214ed83c7.PNG)
+
 Iris First Input Screen
 
 On the second page of the main menu (numbered according to instructions above): 
@@ -132,6 +133,7 @@ On the second page of the main menu (numbered according to instructions above):
 9. 5. The column that contains the category names is column 5. Notice that I didn't double input the category column into the exclude columns list.
 
 ![iris2](https://user-images.githubusercontent.com/31462296/42175389-148d14f8-7dda-11e8-8f5c-0fd332c4e005.PNG)
+
 Iris Second Input Screen
 
 After inputting the values, I hit the calculate PCA button, and the application calculates and projects the data onto the first 3 principle components. Like so:
@@ -149,6 +151,7 @@ In this example we will be plotting coordinate data regarding mouse embryo devel
 5. True. coord_data.csv does contain coordinate data
 
 ![coord_data1](https://user-images.githubusercontent.com/31462296/42176029-76e524ae-7ddc-11e8-9d9b-3d14252f643a.PNG)
+
 Coord_Data First Input Screen
 
 7. 0. I don't want to include the first column that simply numbers the rows of data.
@@ -156,6 +159,7 @@ Coord_Data First Input Screen
 9. 4 
 
 ![coord_data2](https://user-images.githubusercontent.com/31462296/42176031-7793e1d8-7ddc-11e8-9026-6d84a3377285.PNG)
+
 Coord_Data Second Input Screen
 
 Final plot: 
@@ -172,6 +176,7 @@ In this example we will be plotting the transpose of the data in [Processed_Data
 5. False 
 
 ![processed_data1](https://user-images.githubusercontent.com/31462296/42176097-adf7299c-7ddc-11e8-974e-4ee210fe9432.PNG)
+
 Processed_Data First Input Screen
 
 7. 0
@@ -179,6 +184,7 @@ Processed_Data First Input Screen
 9. N/A
 
 ![processed_data2](https://user-images.githubusercontent.com/31462296/42176099-aec6db1a-7ddc-11e8-94e0-480576c711dd.PNG)
+
 Processed_Data Second Input Screen
 
 Final plot:
