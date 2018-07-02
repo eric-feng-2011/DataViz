@@ -136,7 +136,8 @@ Iris Second Input Screen
 
 After inputting the values, I hit the calculate PCA button, and the application calculates and projects the data onto the first 3 principle components. Like so:
 
-<img width="678" alt="example 1 plot" src="https://user-images.githubusercontent.com/31462296/41297618-241cb41a-6e25-11e8-9101-403de714ae07.png">
+![irisplot](https://user-images.githubusercontent.com/31462296/42176018-67822732-7ddc-11e8-9fa3-a178356f3a24.PNG)
+Iris Final Plot
 
 ### Example 2
 In this example we will be plotting coordinate data regarding mouse embryo development from [coord_data.csv](Assets/Resources/coord_data.csv). The original data file was too large, and I used numpy to calculate these points. Source:  Deng, Qiaolin, et al. “Single-Cell RNA-Seq Reveals Dynamic, Random Monoallelic Gene Expression in Mammalian Cells.” Science, vol. 343, no. 6167, 10 Jan. 2014, pp. 193 –196., doi:10.1126/science.1245316.
@@ -147,17 +148,19 @@ In this example we will be plotting coordinate data regarding mouse embryo devel
 4. False 
 5. True. coord_data.csv does contain coordinate data
 
-<img width="474" alt="example 2 menu 1" src="https://user-images.githubusercontent.com/31462296/41298486-13438630-6e27-11e8-9e5f-da0fbdb79086.png">
+![coord_data1](https://user-images.githubusercontent.com/31462296/42176029-76e524ae-7ddc-11e8-9d9b-3d14252f643a.PNG)
+Coord_Data First Input Screen
 
 7. 0. I don't want to include the first column that simply numbers the rows of data.
 8. True 
 9. 4 
 
-<img width="476" alt="example 2 menu 2" src="https://user-images.githubusercontent.com/31462296/41298504-20b29450-6e27-11e8-97bf-3bac7c1d820f.png">
+![coord_data2](https://user-images.githubusercontent.com/31462296/42176031-7793e1d8-7ddc-11e8-9026-6d84a3377285.PNG)
+Coord_Data Second Input Screen
 
 Final plot: 
 
-<img width="665" alt="example 2 plot" src="https://user-images.githubusercontent.com/31462296/41298531-2d2ca0fe-6e27-11e8-8050-22c31b3aca5d.png">
+![coord_dataplot](https://user-images.githubusercontent.com/31462296/42176036-787e68a2-7ddc-11e8-889a-f8d7bec3c579.PNG)
 
 ### Example 3
 In this example we will be plotting the transpose of the data in [Processed_Data.csv](Assets/Resources/Processed_Data.csv). Source: Tsai MH, Chen X, Chandramouli GV, Chen Y, Yan H, Zhao S, Keng P, Liber HL, Coleman CN, Mitchell JB, Chuang EY: Transcriptional responses to ionizing radiation reveal that p53R2 protects against radiation-induced mutagenesis in human lymphoblastoid cells. Oncogene 2006, 25:622-632.
@@ -168,17 +171,19 @@ In this example we will be plotting the transpose of the data in [Processed_Data
 4. True 
 5. False 
 
-<img width="475" alt="example 3 menu 1" src="https://user-images.githubusercontent.com/31462296/41299681-9df954a6-6e29-11e8-9129-e8ac7cbb42c9.png">
+![processed_data1](https://user-images.githubusercontent.com/31462296/42176097-adf7299c-7ddc-11e8-974e-4ee210fe9432.PNG)
+Processed_Data First Input Screen
 
 7. 0
 8. False 
 9. N/A
 
-<img width="479" alt="example 3 menu 2" src="https://user-images.githubusercontent.com/31462296/41310712-e9763688-6e47-11e8-82a0-1ccc5b1af7bc.png">
+![processed_data2](https://user-images.githubusercontent.com/31462296/42176099-aec6db1a-7ddc-11e8-94e0-480576c711dd.PNG)
+Processed_Data Second Input Screen
 
 Final plot:
 
-<img width="661" alt="example 3 plot" src="https://user-images.githubusercontent.com/31462296/41310726-f3ee6c98-6e47-11e8-966b-26db245f0679.png">
+![processed_data3](https://user-images.githubusercontent.com/31462296/42176101-afbc2e58-7ddc-11e8-81f6-a99dbe1bc743.PNG)
 
 [Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
 
