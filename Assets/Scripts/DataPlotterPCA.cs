@@ -86,8 +86,7 @@ public class DataPlotterPCA : MonoBehaviour {
 		graph.transform.localScale *= scale / 10.0f;
 
 		// Set pointlist to results of function Reader with argument inputfile
-		writeFile();
-		pointList = CSVReader.Read("input");
+		pointList = CSVReader.Read(directory, inputfile);
 
 		//If the user wants the data flipped, here is where it is done
 		if (flipData) {
@@ -150,38 +149,6 @@ public class DataPlotterPCA : MonoBehaviour {
 		for (int i = 0; i < numExcluded; i++) {
 			if (PlayerPrefs.HasKey (excludeColKey + i.ToString ())) {
 				excludeColumns.Add (PlayerPrefs.GetInt (excludeColKey + i.ToString ()));
-			}
-		}
-	}
-
-	//Read in a file from outside Unity and load it into a file named 'input.csv'
-	void writeFile() {
-        //Accounts for difference between OS path writing
-        if (directory.Contains("\\"))
-        {
-            inputfile = directory + "\\" + inputfile;
-        } else if (directory.Contains("/"))
-        {
-            inputfile = directory + "/" + inputfile;
-        }
-
-        foreach (string file in Directory.GetFiles(directory))
-		{
-			if (file == inputfile) {
-				string contents = File.ReadAllText (file);
-
-				string path = "Assets/Resources/input.csv";
-
-                //Write some text to the input.txt file
-                using (StreamWriter writer = new StreamWriter(path, false))
-                {
-                    writer.WriteLine(contents);
-                    writer.Close();
-                }
-
-				//Re-import the file to update the reference in the editor
-				AssetDatabase.ImportAsset(path); 
-				TextAsset asset = (TextAsset) Resources.Load("input");
 			}
 		}
 	}
