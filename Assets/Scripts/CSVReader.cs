@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -23,17 +24,34 @@ public class CSVReader
 	static string LINE_SPLIT_RE = @"\r\n|\n\r|\n|\r"; // Define line delimiters, regular experession craziness
 	static char[] TRIM_CHARS = { '\"' };
 
-	public static List<Dictionary<string, object>> Read(string file) //Declare method
+	public static List<Dictionary<string, object>> Read(string directory, string inputfile) //Declare method
 	{
-		//Debug.Log("CSVReader is reading " + file); // Print filename, make sure parsed correctly
+        Debug.Log("CSVReader is reading " + inputfile); // Print filename, make sure parsed correctly
 
-		var list = new List<Dictionary<string, object>>(); //declare dictionary list
+        //Make sure path to resource is correct. Accounts for forward and back slash difference
+        if (directory.Contains("\\"))
+        {
+            inputfile = directory + "\\" + inputfile;
+        }
+        else if (directory.Contains("/"))
+        {
+            inputfile = directory + "/" + inputfile;
+        }
 
-		TextAsset data = Resources.Load(file) as TextAsset; //Loads the TextAsset named in the file argument of the function
+        var list = new List<Dictionary<string, object>>(); //declare dictionary list
+        string contents = "";
 
-		// Debug.Log("Data loaded:" + data); // Print raw data, make sure parsed correctly
+        //Searches for the given inputfile and reads it if it exists
+        foreach (string file in Directory.GetFiles(directory))
+        {
+            if (file == inputfile)
+            {
+                contents = File.ReadAllText(file);
+                Debug.Log("File content: " + contents);
+            }
+        }
 
-		var lines = Regex.Split(data.text, LINE_SPLIT_RE); // Split data.text into lines using LINE_SPLIT_RE characters
+        var lines = Regex.Split(contents, LINE_SPLIT_RE); // Split file contents into lines using LINE_SPLIT_RE characters
 
 		if (lines.Length <= 1) return list; //Check that there is more than one line
 
