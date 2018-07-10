@@ -35,6 +35,5 @@ public class PauseMenuNameNotMatch : MonoBehaviour {
 	//Quit the application and/or editor.
 	public void quit() {
 		Application.Quit ();
-		UnityEditor.EditorApplication.isPlaying = false;
 	}
 }
