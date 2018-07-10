@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
 using System;
 using System.IO;
 using Accord;
@@ -195,15 +194,16 @@ public class DataPlotterPCA : MonoBehaviour {
 		//The inputMatrix to the PCA
 		double[][] inputMatrix = convertTo2D(pointList);
 
-		PrincipalComponentAnalysis pca = new PrincipalComponentAnalysis(inputMatrix, AnalysisMethod.Center);
+		PrincipalComponentAnalysis pca = new PrincipalComponentAnalysis();
 
 		//Computes N number of Principal components
 		//N is the number of data points/entrys
-		pca.Compute();
+		pca.Learn(inputMatrix);
 
-		//Transforms the initial data by projecting it into three dimensions
-		//using the found principle component axises
-		double[][] result = pca.Transform (inputMatrix, 3);
+        //Transforms the initial data by projecting it into three dimensions
+        //using the found principle component axises
+        pca.NumberOfOutputs = 3;
+		double[][] result = pca.Transform (inputMatrix);
 
 		//Return the transformed data. Contains the coordinates of the data points after projection
 		return result;
@@ -232,7 +232,7 @@ public class DataPlotterPCA : MonoBehaviour {
 			// Instantiate as gameobject variable so that it can be manipulated within loop
 			GameObject dataPoint = Instantiate(
 				PointPrefab, 
-				new Vector3(x, y, z) * newScale, 
+				new UnityEngine.Vector3(x, y, z) * newScale, 
 				Quaternion.identity);
 			// Make dataPoint child of PointHolder object 
 			dataPoint.transform.parent = PointHolder.transform;
@@ -262,30 +262,30 @@ public class DataPlotterPCA : MonoBehaviour {
 	private void AssignLabels()
 	{
 		//update file name
-		GameObject data_Label = Instantiate (textLabel, new Vector3 (12, 10, 0), Quaternion.identity);
+		GameObject data_Label = Instantiate (textLabel, new UnityEngine.Vector3(12, 10, 0), Quaternion.identity);
 		data_Label.GetComponent<TextMesh> ().text = inputfile;
 		data_Label.transform.parent = labelHolder.transform;
         increaseResolution(data_Label);
 
 		// Update point counter
-		GameObject point_Count = Instantiate(textLabel, new Vector3(12, 8, 0), Quaternion.identity);
+		GameObject point_Count = Instantiate(textLabel, new UnityEngine.Vector3(12, 8, 0), Quaternion.identity);
 		point_Count.GetComponent<TextMesh> ().text = "Number of Points: "
 				+ pointList.Count.ToString ("0");
 		point_Count.transform.parent = labelHolder.transform;
         increaseResolution(point_Count);
 
         //Update axis titles to Principle Components
-        GameObject x_Axis = Instantiate(textLabel, new Vector3(scale, 1, 0), Quaternion.identity);
+        GameObject x_Axis = Instantiate(textLabel, new UnityEngine.Vector3(scale, 1, 0), Quaternion.identity);
 		x_Axis.GetComponent<TextMesh> ().text = "X-Axis: PCA1"; 
 		x_Axis.transform.parent = labelHolder.transform;
         increaseResolution(x_Axis);
 
-        GameObject y_Axis = Instantiate(textLabel, new Vector3(1, scale, 0), Quaternion.identity);
+        GameObject y_Axis = Instantiate(textLabel, new UnityEngine.Vector3(1, scale, 0), Quaternion.identity);
 		y_Axis.GetComponent<TextMesh> ().text = "Y-Axis: PCA2"; 
 		y_Axis.transform.parent = labelHolder.transform;
         increaseResolution(y_Axis);
 
-        GameObject z_Axis = Instantiate(textLabel, new Vector3(0, 1, scale), Quaternion.identity);
+        GameObject z_Axis = Instantiate(textLabel, new UnityEngine.Vector3(0, 1, scale), Quaternion.identity);
 		z_Axis.GetComponent<TextMesh> ().text = "Z-Axis: PCA3"; 
 		z_Axis.transform.parent = labelHolder.transform;
         increaseResolution(z_Axis);
@@ -299,7 +299,7 @@ public class DataPlotterPCA : MonoBehaviour {
         }
 
         label.GetComponent<TextMesh>().fontSize = 100;
-        label.transform.localScale = new Vector3(0.25f, 0.25f, 1);
+        label.transform.localScale = new UnityEngine.Vector3(0.25f, 0.25f, 1);
     }
 
     private void createLegend()
@@ -328,7 +328,7 @@ public class DataPlotterPCA : MonoBehaviour {
                 offsetY = 0;
                 offsetX += 60f;
             }
-            legendRect.anchoredPosition3D = new Vector3(legendRect.anchoredPosition3D.x + offsetX, legendRect.anchoredPosition3D.y + offsetY, 0);
+            legendRect.anchoredPosition3D = new UnityEngine.Vector3(legendRect.anchoredPosition3D.x + offsetX, legendRect.anchoredPosition3D.y + offsetY, 0);
             legendContent.GetComponentInChildren<Text>().text = keys[i];
             legendContent.GetComponentInChildren<Image>().color = colorMap[keys[i]];
         }

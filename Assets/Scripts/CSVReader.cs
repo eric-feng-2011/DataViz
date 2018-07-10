@@ -26,8 +26,6 @@ public class CSVReader
 
 	public static List<Dictionary<string, object>> Read(string directory, string inputfile) //Declare method
 	{
-        Debug.Log("CSVReader is reading " + inputfile); // Print filename, make sure parsed correctly
-
         //Make sure path to resource is correct. Accounts for forward and back slash difference
         if (directory.Contains("\\"))
         {
@@ -47,7 +45,6 @@ public class CSVReader
             if (file == inputfile)
             {
                 contents = File.ReadAllText(file);
-                Debug.Log("File content: " + contents);
             }
         }
 
