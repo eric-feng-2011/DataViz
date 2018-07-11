@@ -2,11 +2,15 @@
 
 This project is for the SDSU REU BioSNTR 2018 Summer Research Program
 
-The goal of this program is to create a tool for visualizing 3-Dimensional Principle Component Analysis (PCA) in virtual reality. Ideally, such a tool would be useful in gaining more understanding for various data. The primary interface used will be HTC Vive.
+Historically, we have heavily relied on 2-dimensional (2D) displays in order to both obtain and communicate large amounts of data in concise, understandable plots. As the volume and complexity of data grows, the traditional 2D charts and graphs are becoming inadequate in demonstrating the multi-faceted nature of various datasets. In this respect, Virtual Reality (VR) holds potential in offering a new, more effective approach for data visualization. 
+
+To this end, the goal of this program is to create a tool for visualizing 3-Dimensional Principle Component Analysis (PCA) in virtual reality. Such a tool would be useful in gaining more understanding for various data and creating new hypotheses. Overall, the relatively successful analysis and graphical rendering of the large datasets demonstrate the potential of VR in data visualization and its increasing importance in the future.
+
+The primary interface used will be HTC Vive.
 
 ## Table of Contents
 
-[Project Status](https://github.com/thunder2011/BioSNTR_Plot_Points#project-status)
+[Basic Information for Developers and Users](https://github.com/thunder2011/BioSNTR_Plot_Points#developers-and-users)
 
 [Code Style / Framework Used](https://github.com/thunder2011/BioSNTR_Plot_Points#code-style--framework-used)
 
@@ -18,9 +22,18 @@ The goal of this program is to create a tool for visualizing 3-Dimensional Princ
 
 [Acknowledgements](https://github.com/thunder2011/BioSNTR_Plot_Points#acknowledgements)
 
-## Project Status
+## Developers and Users
 
-This project is effectively completed. The VR adaption has been tested with the HTC Vive. The Unity Package for developers can be found [here](https://drive.google.com/file/d/1UDTJ2G_HODxaq3XQruNA8PvvIfQha7PF/view?usp=sharing). The Unity Build for the application has not been built (yet).
+This project is completed and is no longer maintained. 
+
+Individual developers who wish to independently expand the project should follow the subsequent steps:
+1) Download Unity. Ideally the version would be Unity 2017.3.1f1, but other versions should work as well.
+2) Download the Unity Package [here](https://drive.google.com/drive/folders/1qtglyBdd9wEhIi0zT3Yw_ypAM53STuby?usp=sharing).
+3) Import the Unity Package into Unity and begin developing.
+
+Individual users should follow these separate steps:
+1) Download the Unity Build Executible [here](https://drive.google.com/drive/folders/1qtglyBdd9wEhIi0zT3Yw_ypAM53STuby?usp=sharing). This is the same link as the previous, but make sure to download the build and not the Unity package!
+2) Set up the HTC Vive, start the application, and enjoy.
 
 [Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
 
@@ -28,21 +41,22 @@ This project is effectively completed. The VR adaption has been tested with the 
 
 This project was built using Unity3D, and the scripting was all done in C#.
 
-The PCA implementations are from Accord Version 3.0.2; the reason why I chose to not use more modern versions of the Accord Framework was I did not know if newer versions would still be compatible with Unity 2017.3 (the version of Unity used in this project).
+The PCA implementations are from Accord 3.8 and target the .Net Framework v3.5; the reason why I chose to not target more modern frameworks (v4.5+) is because Unity has support only for .Net Framework v3.5 in Unity 2017.3.
+    
+    PrincipalComponentAnalysis pca = new PrincipalComponentAnalysis();
 
-    
-    PrincipalComponentAnalysis pca = new PrincipalComponentAnalysis(inputMatrix, AnalysisMethod.Center);
-    
     //Computes N number of Principal components
-    //N is the dimensionality of the data points/entrys
-    pca.Compute();
-    
+    //N is the number of data points/entrys
+    pca.Learn(inputMatrix);
+
     //Transforms the initial data by projecting it into three dimensions
     //using the found principle component axises
-    double[][] result = pca.Transform (inputMatrix, 3);
-    
-    return result;
+    pca.NumberOfOutputs = 3;
+    double[][] result = pca.Transform (inputMatrix);
 
+    //Return the transformed data. Contains the coordinates of the data points after projection
+    return result;
+        
 [Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
 
 ## How to Use
@@ -106,9 +120,9 @@ When directed to a point, the laser prints out the datapoint's name
 
 ## Example Usage
 
-These examples will demonstrate what to input into the various inputfields and what the end result should look like. All example data files mentioned are located on my computer in the absolute directory path \Users\vrab\Desktop\BioSNTR\BioSNTR_Plot_Points\Assets\Resources. 
+These examples will demonstrate what to input into the various inputfields and what the end result should look like. All example data files mentioned are located on my computer in the absolute directory path \Users\vrab\Desktop\BioSNTR. 
 
-![resourcepath](https://user-images.githubusercontent.com/31462296/42175336-ecb8f55a-7dd9-11e8-8412-1f919bbfaba8.PNG)
+![resourcepath](![resourcepath](https://user-images.githubusercontent.com/31462296/42585690-3265ddbc-84eb-11e8-842f-124a74951b2c.PNG))
 Resource Path
 
 ### Example 1
@@ -117,7 +131,7 @@ In this example we will plotting data regarding irises from a datafile named [ir
 I fill out the various inputs of the main menu accordingly: 
 
 1. Scale - 10. Through experimentation, I have determined that a scale of 10 makes the graph look nice.
-2. Directory - \Users\vrab\Desktop\BioSNTR\BioSNTR_Plot_Points\Assets\Resources
+2. Directory - \Users\vrab\Desktop\BioSNTR
 3. File Name - iris.csv
 4. False. I do not want the transpose of the data to be plotted
 5. False. iris.csv does not contain coordinate data
@@ -145,7 +159,7 @@ Iris Final Plot
 In this example we will be plotting coordinate data regarding mouse embryo development from [coord_data.csv](Assets/Resources/coord_data.csv). The original data file was too large, and I used numpy to calculate these points. Source:  Deng, Qiaolin, et al. “Single-Cell RNA-Seq Reveals Dynamic, Random Monoallelic Gene Expression in Mammalian Cells.” Science, vol. 343, no. 6167, 10 Jan. 2014, pp. 193 –196., doi:10.1126/science.1245316.
 
 1. Scale - 30 
-2. Directory - /Users/ericfeng/Desktop/BioSNTR
+2. Directory - \Users\vrab\Desktop\BioSNTR
 3. File Name - coord_data.csv
 4. False 
 5. True. coord_data.csv does contain coordinate data
@@ -170,7 +184,7 @@ Final plot:
 In this example we will be plotting the transpose of the data in [Processed_Data.csv](Assets/Resources/Processed_Data.csv). Source: Tsai MH, Chen X, Chandramouli GV, Chen Y, Yan H, Zhao S, Keng P, Liber HL, Coleman CN, Mitchell JB, Chuang EY: Transcriptional responses to ionizing radiation reveal that p53R2 protects against radiation-induced mutagenesis in human lymphoblastoid cells. Oncogene 2006, 25:622-632.
 
 1. Scale - 5 
-2. Directory - /Users/ericfeng/Desktop/BioSNTR
+2. Directory - \Users\vrab\Desktop\BioSNTR
 3. File Name - Processed_Data.csv
 4. True 
 5. False 
@@ -198,8 +212,9 @@ The following are all third-parties that I have used code implementations from o
 
 1. CSV-Reader from PrinzEugn
 2. The basic data plotting functionality from Big Data Social Science Fellows @ Penn State. 
-3. Accord Framework for PCA
-4. Other. This space is for all sources that I failed to mention.
+3. Accord, Accord.Math, Accord.Statistics Assembly for PCA
+4. The NuGet configuration method for VisualStudio located [here](https://github.com/accord-net/framework/wiki/Unity).
+5. Other. This space is for all sources that I failed to mention.
 
 [Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
 
@@ -207,6 +222,6 @@ The following are all third-parties that I have used code implementations from o
 Special recognition to the following: 
 1. Professor Xijin Ge from SDSU who acted as my advisor for the duration of the project
 2. BioSNTR for funding the development of this application
-3. UC Berkeley and Virtual Reality @ Berkeley for the use of their equipment in the development and testing of the VR components of the application
+3. Virtual Reality @ Berkeley for the use of their equipment in the development and testing of the VR components of the application
 
 [Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
