@@ -136,7 +136,7 @@ I fill out the various inputs of the main menu accordingly:
 4. False. I do not want the transpose of the data to be plotted
 5. False. iris.csv does not contain coordinate data
 
-![iris1](https://user-images.githubusercontent.com/31462296/42175387-139cd0ec-7dda-11e8-933f-4a9214ed83c7.PNG)
+![iris1](https://user-images.githubusercontent.com/31462296/42766480-77593a58-88cf-11e8-83f5-2e0493664d9f.PNG)
 
 Iris First Input Screen
 
@@ -152,7 +152,7 @@ Iris Second Input Screen
 
 After inputting the values, I hit the calculate PCA button, and the application calculates and projects the data onto the first 3 principle components. Like so:
 
-![irisplot](https://user-images.githubusercontent.com/31462296/42176018-67822732-7ddc-11e8-9fa3-a178356f3a24.PNG)
+![irisplot](https://user-images.githubusercontent.com/31462296/42766482-7811cfe6-88cf-11e8-8c2e-e712a2e17ffc.PNG)
 Iris Final Plot
 
 ### Example 2
