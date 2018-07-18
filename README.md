@@ -221,7 +221,10 @@ The following are all third-parties that I have used code implementations from o
 ### Acknowledgements
 Special recognition to the following: 
 1. Professor Xijin Ge from SDSU who acted as my advisor for the duration of the project
-2. BioSNTR for funding the development of this application
-3. Virtual Reality @ Berkeley for the use of their equipment in the development and testing of the VR components of the application
+2. Virtual Reality @ Berkeley for the use of their equipment in the development and testing of the VR components of the application
+
+This research was supported by National Science Foundation/EPSCoR Award No. IIA-1355423, by the state of South Dakota’s Governor’s Office of Economic Development as a South Dakota Research Innovation Center (SDRIC), and with financial/match commitment from all participating institutions.
+
+Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation
 
 [Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
