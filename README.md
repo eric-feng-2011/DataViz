@@ -1,6 +1,4 @@
-# BioSNTR_Plot_Points
-
-This project is for the SDSU REU BioSNTR 2018 Summer Research Program
+# DataViz
 
 Historically, we have heavily relied on 2-dimensional (2D) displays in order to both obtain and communicate large amounts of data in concise, understandable plots. As the volume and complexity of data grows, the traditional 2D charts and graphs are becoming inadequate in demonstrating the multi-faceted nature of various datasets. In this respect, Virtual Reality (VR) holds potential in offering a new, more effective approach for data visualization. 
 
@@ -221,7 +219,7 @@ The following are all third-parties that I have used code implementations from o
 [Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
 
 ## Terms of Use
-BioSNTR Library
+DataViz Library
 Copyright (C) 2018 Eric Feng
 
 This library is free software; you can redistribute it and/or
