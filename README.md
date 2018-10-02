@@ -20,6 +20,8 @@ The primary interface used will be HTC Vive.
 
 [External References](https://github.com/thunder2011/BioSNTR_Plot_Points#external-references)
 
+[Terms of Use](https://github.com/thunder2011/BioSNTR_Plot_Points#terms-of-use)
+
 [Acknowledgements](https://github.com/thunder2011/BioSNTR_Plot_Points#acknowledgements)
 
 ## Developers and Users
@@ -215,6 +217,26 @@ The following are all third-parties that I have used code implementations from o
 3. Accord, Accord.Math, Accord.Statistics Assembly for PCA
 4. The NuGet configuration method for VisualStudio located [here](https://github.com/accord-net/framework/wiki/Unity).
 5. Other. This space is for all sources that I failed to mention.
+
+[Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
+
+## Terms of Use
+BioSNTR Library
+Copyright (C) 2018 Eric Feng
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 [Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
 
