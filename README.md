@@ -1,3 +1,5 @@
+DOI Link: [![DOI](https://zenodo.org/badge/134464985.svg)](https://zenodo.org/badge/latestdoi/134464985)
+
 # DataViz
 
 Historically, we have heavily relied on 2-dimensional (2D) displays in order to both obtain and communicate large amounts of data in concise, understandable plots. As the volume and complexity of data grows, the traditional 2D charts and graphs are becoming inadequate in demonstrating the multi-faceted nature of various datasets. In this respect, Virtual Reality (VR) holds potential in offering a new, more effective approach for data visualization. 
