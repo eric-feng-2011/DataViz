@@ -32,7 +32,7 @@ Individual developers who wish to independently expand the project should follow
 3) Import the Unity Package into Unity and begin developing.
 
 Individual users should follow these separate steps:
-1) Download the Unity Build Application. Navigate to the application through the path Project_Build.add/Contents/MacOS. 
+1) Download the Unity Build Application. Navigate to the application in the ProjectBuild folder. The executible is named BioSNTR_Plot_Points.exe 
 2) Set up the HTC Vive, start the application, and enjoy.
 
 [Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
