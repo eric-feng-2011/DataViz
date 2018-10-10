@@ -28,11 +28,11 @@ This project is completed and is no longer maintained.
 
 Individual developers who wish to independently expand the project should follow the subsequent steps:
 1) Download Unity. Ideally the version would be Unity 2017.3.1f1, but other versions should work as well.
-2) Download the Unity Package [here](https://drive.google.com/drive/folders/1qtglyBdd9wEhIi0zT3Yw_ypAM53STuby?usp=sharing).
+2) Download the Unity Package file. The name is Project_Package.unitypackage.
 3) Import the Unity Package into Unity and begin developing.
 
 Individual users should follow these separate steps:
-1) Download the Unity Build Executible [here](https://drive.google.com/drive/folders/1qtglyBdd9wEhIi0zT3Yw_ypAM53STuby?usp=sharing). This is the same link as the previous, but make sure to download the build and not the Unity package!
+1) Download the Unity Build Application. Navigate to the application through the path Project_Build.add/Contents/MacOS. 
 2) Set up the HTC Vive, start the application, and enjoy.
 
 [Back to TOC](https://github.com/thunder2011/BioSNTR_Plot_Points#table-of-contents)
